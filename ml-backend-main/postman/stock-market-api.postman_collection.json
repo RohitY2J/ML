@@ -1,0 +1,1118 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+		"name": "Stock Market API",
+		"description": "Collection for testing the Stock Market API endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/health",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"health"
+					]
+				},
+				"description": "Check if the API is running"
+			},
+			"response": [
+				{
+					"name": "Success Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/health"
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": {
+						"success": true,
+						"data": {
+							"status": "healthy",
+							"timestamp": "2024-03-14T10:30:00Z"
+						},
+						"message": "Service is healthy"
+					}
+				}
+			]
+		},
+		{
+			"name": "Get Trading Signals",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/trading-signals",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"trading-signals"
+					]
+				},
+				"description": "Get trading signals (BUY/SELL/HOLD) for specified stocks"
+			},
+			"response": [
+				{
+					"name": "Success Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/trading-signals"
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": {
+						"success": true,
+						"data": [
+							{
+								"id": 1,
+								"symbol": "ADBL",
+								"ltp": 291.96,
+								"signal": "BUY",
+								"buy_target": 300.00,
+								"sell_target": 320.00,
+								"stop_loss": 280.00,
+								"change_percent": 0.69,
+								"created_at": "2024-03-14T10:30:00"
+							},
+							{
+								"id": 2,
+								"symbol": "CZBIL",
+								"ltp": 212.68,
+								"signal": "HOLD",
+								"buy_target": null,
+								"sell_target": null,
+								"stop_loss": null,
+								"change_percent": 1.41,
+								"created_at": "2024-03-14T10:30:00"
+							}
+						],
+						"message": "Trading signals retrieved successfully"
+					}
+				},
+				{
+					"name": "Not Found Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/trading-signals"
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": {
+						"success": false,
+						"error": {
+							"code": "NOT_FOUND",
+							"message": "No trading signals found"
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Get AI Trading Signals",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/ai-signals",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"ai-signals"
+					]
+				},
+				"description": "Get AI-generated trading signals with buy/sell recommendations and detailed analysis"
+			},
+			"response": [
+				{
+					"name": "Success Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/ai-signals"
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": {
+						"success": true,
+						"data": [
+							{
+								"symbol": "NABIL",
+								"signal": "BUY",
+								"buy_date": "2024-10-15",
+								"buy_price": 1025.50,
+								"adj_buy_price": null,
+								"sold_date": null,
+								"sold_price": null,
+								"current_strategy": "Active",
+								"point_change": null,
+								"profit_loss_pct": null,
+								"buy_range": "1000.00 - 1030.00",
+								"sell_range": "1080.00 - 1120.00",
+								"risk_reward_ratio": "1:3.50",
+								"stop_loss": "980.00",
+								"trade_result": null
+							}
+						],
+						"message": "AI trading signals retrieved successfully"
+					}
+				},
+				{
+					"name": "Not Found Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/ai-signals"
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": {
+						"success": false,
+						"error": {
+							"code": "NOT_FOUND",
+							"message": "No AI trading signals found"
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Get Combined Trading Signals",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/signals/combined-signals?symbol=ADBL",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"signals",
+						"combined-signals"
+					],
+					"query": [
+						{
+							"key": "symbol",
+							"value": "ADBL",
+							"description": "Stock symbol to get signals for"
+						}
+					]
+				},
+				"description": "Get historical trading signals with technical indicators for a specific symbol"
+			},
+			"response": [
+				{
+					"name": "Success Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/trading-signals/combined-signals?symbol=ADBL"
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": {
+						"success": true,
+						"data": [
+							{
+								"date": "2024-03-14",
+								"Stock": "ADBL",
+								"Signal": "BUY",
+								"Buy Date": "-",
+								"Buy Price": 280.50,
+								"Adj. Buy Price": "-",
+								"Sold": "-",
+								"Sold Price": 295.75,
+								"Current Strategy": "Active",
+								"Point Change": "-",
+								"Profit/Loss%": "0.69%",
+								"Buy Range": "-",
+								"Sell Range": "-",
+								"Risk-To-Reward Ratio": "-",
+								"Stop Loss": 274.89,
+								"Trade Result": "-",
+								"Technical Indicators": {
+									"SMA20": 285.25,
+									"SMA50": 282.75,
+									"EMA20": 284.50,
+									"MACD": 1.25,
+									"MACD Signal": 0.75,
+									"RSI": 58.5,
+									"Stochastic K": 65.2,
+									"Stochastic D": 62.8,
+									"BB High": 295.75,
+									"BB Low": 280.50,
+									"BB Mid": 288.12,
+									"VWAP": 287.25
+								}
+							},
+							{
+								"date": "2024-03-13",
+								"Stock": "ADBL",
+								"Signal": "HOLD",
+								"Buy Date": "-",
+								"Buy Price": 278.25,
+								"Adj. Buy Price": "-",
+								"Sold": "-",
+								"Sold Price": 292.50,
+								"Current Strategy": "Active",
+								"Point Change": "-",
+								"Profit/Loss%": "-0.25%",
+								"Buy Range": "-",
+								"Sell Range": "-",
+								"Risk-To-Reward Ratio": "-",
+								"Stop Loss": 272.69,
+								"Trade Result": "-",
+								"Technical Indicators": {
+									"SMA20": 284.75,
+									"SMA50": 282.25,
+									"EMA20": 283.50,
+									"MACD": 0.95,
+									"MACD Signal": 0.85,
+									"RSI": 52.3,
+									"Stochastic K": 58.7,
+									"Stochastic D": 60.2,
+									"BB High": 293.50,
+									"BB Low": 278.25,
+									"BB Mid": 285.87,
+									"VWAP": 286.50
+								}
+							}
+						],
+						"message": "Historical trading signals retrieved successfully"
+					}
+				},
+				{
+					"name": "Not Found Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/trading-signals/combined-signals?symbol=INVALID"
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": {
+						"success": false,
+						"error": {
+							"code": "NOT_FOUND",
+							"message": "No analytics data found for symbol INVALID"
+						}
+					}
+				},
+				{
+					"name": "Bad Request Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/trading-signals/combined-signals"
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": {
+						"success": false,
+						"error": {
+							"code": "BAD_REQUEST",
+							"message": "Symbol parameter is required"
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Get All Symbols",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/symbols",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"symbols"
+					]
+				},
+				"description": "Get all available stock symbols"
+			},
+			"response": [
+				{
+					"name": "Success Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/symbols"
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": {
+						"success": true,
+						"data": [
+							"ADBL",
+							"CZBIL",
+							"NABIL",
+							"NRIC"
+						],
+						"message": "Symbols retrieved successfully"
+					}
+				}
+			]
+		},
+		{
+			"name": "Get Daily Data",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/stocks/daily/CLI?startDate=2025-02-01&endDate=2025-02-28",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"stocks",
+						"daily",
+						"CLI"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2025-02-01",
+							"description": "Start date in YYYY-MM-DD format"
+						},
+						{
+							"key": "endDate",
+							"value": "2025-02-28",
+							"description": "End date in YYYY-MM-DD format"
+						}
+					],
+					"description": "Get daily stock data for a specific symbol"
+				}
+			},
+			"response": [
+				{
+					"name": "Success Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/stocks/daily/CLI?startDate=2025-02-01&endDate=2025-02-28"
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": {
+						"success": true,
+						"data": [
+							{
+								"date": "2025-02-01",
+								"symbol": "CLI",
+								"open": 1500.00,
+								"high": 1520.00,
+								"low": 1490.00,
+								"close": 1510.00,
+								"volume": 10000
+							}
+						],
+						"message": "Daily data retrieved successfully"
+					}
+				},
+				{
+					"name": "Not Found Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/stocks/daily/CLI?startDate=2025-02-01&endDate=2025-02-28"
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": {
+						"success": false,
+						"error": {
+							"code": "NOT_FOUND",
+							"message": "No daily data found for symbol CLI"
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Get Intraday Data",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/stocks/intraday/CLI?startDate=2025-02-01&endDate=2025-02-28",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"stocks",
+						"intraday",
+						"CLI"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2025-02-01",
+							"description": "Start date in YYYY-MM-DD format"
+						},
+						{
+							"key": "endDate",
+							"value": "2025-02-28",
+							"description": "End date in YYYY-MM-DD format"
+						}
+					],
+					"description": "Get intraday stock data for a specific symbol"
+				}
+			},
+			"response": [
+				{
+					"name": "Success Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/stocks/intraday/CLI?startDate=2025-02-01&endDate=2025-02-28"
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": {
+						"success": true,
+						"data": [
+							{
+								"date": "2025-02-01T10:00:00",
+								"symbol": "CLI",
+								"open": 1500.00,
+								"high": 1520.00,
+								"low": 1490.00,
+								"close": 1510.00,
+								"volume": 1000
+							}
+						],
+						"message": "Intraday data retrieved successfully"
+					}
+				},
+				{
+					"name": "Not Found Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/stocks/intraday/CLI?startDate=2025-02-01&endDate=2025-02-28"
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": {
+						"success": false,
+						"error": {
+							"code": "NOT_FOUND",
+							"message": "No intraday data found for symbol CLI"
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Get Support and Resistance Zones",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/zones/NABIL?timeframe=90",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"zones",
+						"NABIL"
+					],
+					"query": [
+						{
+							"key": "timeframe",
+							"value": "90",
+							"description": "Timeframe in days (90, 180, 365, 730)"
+						}
+					],
+					"description": "Get both support and resistance zones for a symbol and timeframe"
+				}
+			},
+			"response": [
+				{
+					"name": "Success Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/zones/NABIL?timeframe=90"
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": {
+						"success": true,
+						"data": {
+							"symbol": "NABIL",
+							"timeframe_days": 90,
+							"support_zones": [
+								{
+									"zone_number": 1,
+									"bottom_price": 1000.00,
+									"center_price": 1025.00,
+									"top_price": 1050.00
+								}
+							],
+							"resistance_zones": [
+								{
+									"zone_number": 1,
+									"bottom_price": 1100.00,
+									"center_price": 1125.00,
+									"top_price": 1150.00
+								}
+							]
+						},
+						"message": "Support and resistance zones retrieved successfully"
+					}
+				},
+				{
+					"name": "Not Found Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/zones/NABIL?timeframe=90"
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": {
+						"success": false,
+						"error": {
+							"code": "NOT_FOUND",
+							"message": "No zones found for symbol NABIL"
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Get Trendlines",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/trendlines/NABIL?timeframe=90",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"trendlines",
+						"NABIL"
+					],
+					"query": [
+						{
+							"key": "timeframe",
+							"value": "90",
+							"description": "Timeframe in days (90, 180, 365, 730)"
+						}
+					],
+					"description": "Get trendlines for a symbol and timeframe"
+				}
+			},
+			"response": [
+				{
+					"name": "Success Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/trendlines/NABIL?timeframe=90"
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": {
+						"success": true,
+						"data": {
+							"symbol": "NABIL",
+							"timeframe_days": 90,
+							"trendlines": [
+								{
+									"trendline_number": 1,
+									"start_date": "2024-01-01",
+									"end_date": "2024-03-14",
+									"start_price": 1000.00,
+									"end_price": 1100.00,
+									"slope": 1.11,
+									"trend_type": "UPTREND"
+								}
+							]
+						},
+						"message": "Trendlines retrieved successfully"
+					}
+				},
+				{
+					"name": "Not Found Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/trendlines/NABIL?timeframe=90"
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": {
+						"success": false,
+						"error": {
+							"code": "NOT_FOUND",
+							"message": "No trendlines found for symbol NABIL"
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Get Trading Zones",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/trading-zones/NABIL?timeframe=90",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"trading-zones",
+						"NABIL"
+					],
+					"query": [
+						{
+							"key": "timeframe",
+							"value": "90",
+							"description": "Timeframe in days (90, 180, 365, 730)"
+						}
+					],
+					"description": "Get immediate demand zone, immediate supply zone, and stop loss zone for a symbol and timeframe"
+				}
+			},
+			"response": [
+				{
+					"name": "Success Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/trading-zones/NABIL?timeframe=90"
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": {
+						"success": true,
+						"data": {
+							"symbol": "NABIL",
+							"timeframe_days": 90,
+							"immediate_demand_zone": {
+								"bottom_price": 1000.00,
+								"center_price": 1025.00,
+								"top_price": 1050.00
+							},
+							"immediate_supply_zone": {
+								"bottom_price": 1100.00,
+								"center_price": 1125.00,
+								"top_price": 1150.00
+							},
+							"stop_loss_zone": {
+								"bottom_price": 950.00,
+								"center_price": 975.00,
+								"top_price": 1000.00
+							}
+						},
+						"message": "Trading zones retrieved successfully"
+					}
+				},
+				{
+					"name": "Not Found Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/trading-zones/NABIL?timeframe=90"
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": {
+						"success": false,
+						"error": {
+							"code": "NOT_FOUND",
+							"message": "No trading zones found for symbol NABIL"
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Get Technical Analysis",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/technical-analysis?symbol=ADBL",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"technical-analysis"
+					],
+					"query": [
+						{
+							"key": "symbol",
+							"value": "ADBL",
+							"description": "Stock symbol to get technical analysis for"
+						}
+					]
+				},
+				"description": "Get detailed technical analysis including support/resistance zones, trend analysis, and key indicators"
+			},
+			"response": [
+				{
+					"name": "Success Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/technical-analysis?symbol=ADBL"
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": {
+						"success": true,
+						"data": {
+							"symbol": "ADBL",
+							"Support/Resistance Zones": {
+								"Support Level 1": 2150.00,
+								"Support Level 2": 2100.00,
+								"Support Level 3": 2050.00,
+								"Resistance Level 1": 2250.00,
+								"Resistance Level 2": 2300.00,
+								"Resistance Level 3": 2350.00
+							},
+							"Trend Analysis": {
+								"Current Trend": "Bullish",
+								"Strength": "Strong"
+							},
+							"Key Indicators": {
+								"RSI (14)": 65.4,
+								"MACD": "Bullish"
+							},
+							"Volume Analysis": {
+								"Volume Trend": "Increasing",
+								"Volume vs Avg": "+15%"
+							}
+						},
+						"message": "Technical analysis retrieved successfully"
+					}
+				},
+				{
+					"name": "Not Found Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/technical-analysis?symbol=INVALID"
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": {
+						"success": false,
+						"error": {
+							"code": "NOT_FOUND",
+							"message": "No technical analysis found for symbol INVALID"
+						}
+					}
+				},
+				{
+					"name": "Bad Request Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/technical-analysis"
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": {
+						"success": false,
+						"error": {
+							"code": "BAD_REQUEST",
+							"message": "Symbol parameter is required"
+						}
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		}
+	]
+} 

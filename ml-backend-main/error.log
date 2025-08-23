@@ -1,0 +1,48 @@
+{"error":{"code":"42P01","file":"parse_relation.c","length":124,"line":"1392","name":"error","position":"887","routine":"parserOpenTable","severity":"ERROR"},"level":"error","message":"Technical analysis fetch failed","symbol":"NEPSE","timestamp":"2025-05-28T09:58:15.972Z"}
+{"error":{"code":"42P01","file":"parse_relation.c","length":124,"line":"1392","name":"error","position":"887","routine":"parserOpenTable","severity":"ERROR"},"level":"error","message":"Error in getTechnicalAnalysis:","symbol":"NEPSE","timestamp":"2025-05-28T09:58:15.974Z"}
+{"error":{"code":"42P01","file":"parse_relation.c","length":124,"line":"1392","name":"error","position":"887","routine":"parserOpenTable","severity":"ERROR"},"level":"error","message":"TechnicalAnalysisController: Error fetching technical analysis","timestamp":"2025-05-28T09:58:15.974Z"}
+{"error":{"code":"42P01","file":"parse_relation.c","length":124,"line":"1392","name":"error","position":"887","routine":"parserOpenTable","severity":"ERROR"},"level":"error","message":"Technical analysis fetch failed","symbol":"NEPSE","timestamp":"2025-05-28T09:58:17.015Z"}
+{"error":{"code":"42P01","file":"parse_relation.c","length":124,"line":"1392","name":"error","position":"887","routine":"parserOpenTable","severity":"ERROR"},"level":"error","message":"Error in getTechnicalAnalysis:","symbol":"NEPSE","timestamp":"2025-05-28T09:58:17.015Z"}
+{"error":{"code":"42P01","file":"parse_relation.c","length":124,"line":"1392","name":"error","position":"887","routine":"parserOpenTable","severity":"ERROR"},"level":"error","message":"TechnicalAnalysisController: Error fetching technical analysis","timestamp":"2025-05-28T09:58:17.015Z"}
+{"error":{},"level":"error","message":"Trading zones fetch failed","symbol":"NEPSE","timeframe_days":90,"timestamp":"2025-08-23T10:50:08.095Z"}
+{"error":{},"level":"error","message":"Error in getTradingZonesService:","symbol":"NEPSE","timeframe_days":90,"timestamp":"2025-08-23T10:50:08.095Z"}
+{"error":{},"level":"error","message":"TradingZoneController: Error fetching trading zones","timestamp":"2025-08-23T10:50:08.096Z"}
+{"error":{},"level":"error","message":"Trading zones fetch failed","symbol":"NEPSE","timeframe_days":90,"timestamp":"2025-08-23T10:50:46.554Z"}
+{"error":{},"level":"error","message":"Error in getTradingZonesService:","symbol":"NEPSE","timeframe_days":90,"timestamp":"2025-08-23T10:50:46.555Z"}
+{"error":{},"level":"error","message":"TradingZoneController: Error fetching trading zones","timestamp":"2025-08-23T10:50:46.556Z"}
+{"error":{},"level":"error","message":"Daily data fetch failed","symbol":"NEPSE","timestamp":"2025-08-23T10:50:46.687Z"}
+{"error":{},"level":"error","message":"Error in getDailyDataService:","symbol":"NEPSE","timestamp":"2025-08-23T10:50:46.688Z"}
+{"error":{},"level":"error","message":"StockController: Error fetching daily data","timestamp":"2025-08-23T10:50:46.689Z"}
+{"error":{},"level":"error","message":"Daily data fetch failed","symbol":"NEPSE","timestamp":"2025-08-23T10:50:46.804Z"}
+{"error":{},"level":"error","message":"Error in getDailyDataService:","symbol":"NEPSE","timestamp":"2025-08-23T10:50:46.805Z"}
+{"error":{},"level":"error","message":"StockController: Error fetching daily data","timestamp":"2025-08-23T10:50:46.807Z"}
+{"error":{},"level":"error","message":"Trading zones fetch failed","symbol":"NEPSE","timeframe_days":90,"timestamp":"2025-08-23T10:50:50.554Z"}
+{"error":{},"level":"error","message":"Error in getTradingZonesService:","symbol":"NEPSE","timeframe_days":90,"timestamp":"2025-08-23T10:50:50.555Z"}
+{"error":{},"level":"error","message":"TradingZoneController: Error fetching trading zones","timestamp":"2025-08-23T10:50:50.555Z"}
+{"error":{},"level":"error","message":"Daily data fetch failed","symbol":"NEPSE","timestamp":"2025-08-23T10:51:03.382Z"}
+{"error":{},"level":"error","message":"Error in getDailyDataService:","symbol":"NEPSE","timestamp":"2025-08-23T10:51:03.382Z"}
+{"error":{},"level":"error","message":"StockController: Error fetching daily data","timestamp":"2025-08-23T10:51:03.383Z"}
+{"error":{},"level":"error","message":"Trading zones fetch failed","symbol":"NEPSE","timeframe_days":90,"timestamp":"2025-08-23T10:51:20.007Z"}
+{"error":{},"level":"error","message":"Error in getTradingZonesService:","symbol":"NEPSE","timeframe_days":90,"timestamp":"2025-08-23T10:51:20.008Z"}
+{"error":{},"level":"error","message":"TradingZoneController: Error fetching trading zones","timestamp":"2025-08-23T10:51:20.009Z"}
+{"error":{},"level":"error","message":"Daily data fetch failed","symbol":"NEPSE","timestamp":"2025-08-23T10:51:20.459Z"}
+{"error":{},"level":"error","message":"Error in getDailyDataService:","symbol":"NEPSE","timestamp":"2025-08-23T10:51:20.459Z"}
+{"error":{},"level":"error","message":"StockController: Error fetching daily data","timestamp":"2025-08-23T10:51:20.460Z"}
+{"error":{},"level":"error","message":"Daily data fetch failed","symbol":"NEPSE","timestamp":"2025-08-23T10:51:20.779Z"}
+{"error":{},"level":"error","message":"Error in getDailyDataService:","symbol":"NEPSE","timestamp":"2025-08-23T10:51:20.780Z"}
+{"error":{},"level":"error","message":"StockController: Error fetching daily data","timestamp":"2025-08-23T10:51:20.781Z"}
+{"error":{},"level":"error","message":"Trading zones fetch failed","symbol":"NEPSE","timeframe_days":90,"timestamp":"2025-08-23T10:51:21.510Z"}
+{"error":{},"level":"error","message":"Error in getTradingZonesService:","symbol":"NEPSE","timeframe_days":90,"timestamp":"2025-08-23T10:51:21.511Z"}
+{"error":{},"level":"error","message":"TradingZoneController: Error fetching trading zones","timestamp":"2025-08-23T10:51:21.511Z"}
+{"error":{"code":"42P01","file":"parse_relation.c","length":124,"line":"1392","name":"error","position":"212","routine":"parserOpenTable","severity":"ERROR"},"level":"error","message":"Current year analytics signals fetch failed","symbol":"NEPSE","timestamp":"2025-08-23T11:21:15.259Z"}
+{"error":{"code":"42P01","file":"parse_relation.c","length":124,"line":"1392","name":"error","position":"212","routine":"parserOpenTable","severity":"ERROR"},"level":"error","message":"Error in getHistoricalSignals:","symbol":"NEPSE","timestamp":"2025-08-23T11:21:15.265Z"}
+{"error":{"code":"42P01","file":"parse_relation.c","length":124,"line":"1392","name":"error","position":"212","routine":"parserOpenTable","severity":"ERROR"},"level":"error","message":"TradingSignalController: Error fetching historical signals","timestamp":"2025-08-23T11:21:15.267Z"}
+{"error":{"code":"42P01","file":"parse_relation.c","length":124,"line":"1392","name":"error","position":"212","routine":"parserOpenTable","severity":"ERROR"},"level":"error","message":"Current year analytics signals fetch failed","symbol":"NEPSE","timestamp":"2025-08-23T11:21:40.712Z"}
+{"error":{"code":"42P01","file":"parse_relation.c","length":124,"line":"1392","name":"error","position":"212","routine":"parserOpenTable","severity":"ERROR"},"level":"error","message":"Error in getHistoricalSignals:","symbol":"NEPSE","timestamp":"2025-08-23T11:21:40.714Z"}
+{"error":{"code":"42P01","file":"parse_relation.c","length":124,"line":"1392","name":"error","position":"212","routine":"parserOpenTable","severity":"ERROR"},"level":"error","message":"TradingSignalController: Error fetching historical signals","timestamp":"2025-08-23T11:21:40.715Z"}
+{"error":{"code":"42P01","file":"parse_relation.c","length":124,"line":"1392","name":"error","position":"212","routine":"parserOpenTable","severity":"ERROR"},"level":"error","message":"Current year analytics signals fetch failed","symbol":"ADBL","timestamp":"2025-08-23T11:21:59.276Z"}
+{"error":{"code":"42P01","file":"parse_relation.c","length":124,"line":"1392","name":"error","position":"212","routine":"parserOpenTable","severity":"ERROR"},"level":"error","message":"Error in getHistoricalSignals:","symbol":"ADBL","timestamp":"2025-08-23T11:21:59.277Z"}
+{"error":{"code":"42P01","file":"parse_relation.c","length":124,"line":"1392","name":"error","position":"212","routine":"parserOpenTable","severity":"ERROR"},"level":"error","message":"TradingSignalController: Error fetching historical signals","timestamp":"2025-08-23T11:21:59.278Z"}
+{"error":{"code":"42P01","file":"parse_relation.c","length":124,"line":"1392","name":"error","position":"212","routine":"parserOpenTable","severity":"ERROR"},"level":"error","message":"Current year analytics signals fetch failed","symbol":"ADBL","timestamp":"2025-08-23T11:22:00.651Z"}
+{"error":{"code":"42P01","file":"parse_relation.c","length":124,"line":"1392","name":"error","position":"212","routine":"parserOpenTable","severity":"ERROR"},"level":"error","message":"Error in getHistoricalSignals:","symbol":"ADBL","timestamp":"2025-08-23T11:22:00.652Z"}
+{"error":{"code":"42P01","file":"parse_relation.c","length":124,"line":"1392","name":"error","position":"212","routine":"parserOpenTable","severity":"ERROR"},"level":"error","message":"TradingSignalController: Error fetching historical signals","timestamp":"2025-08-23T11:22:00.653Z"}

@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-rgb: 243, 244, 246;
+}
+
+body {
+  color: #0d1421;
+  background: rgb(var(--background-rgb));
+  font-family: "Inter Semi Bold", sans-serif;
+  font-weight: 600;
+}
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-md font-medium transition-colors duration-200;
+  }
+
+  .btn-primary {
+    @apply bg-blue-600 text-white hover:bg-blue-700;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-100 text-gray-700 hover:bg-gray-200;
+  }
+
+  .bg-dark-default {
+    @apply bg-[#050407];
+  }
+  .bg-dark-light {
+    @apply bg-[#1b1e24];
+  }
+
+  .bg-dark-lighter {
+    @apply bg-[#2A2E39];
+  }
+}

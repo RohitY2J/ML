@@ -1,0 +1,49 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: stock-market-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-merolagani_pg}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./data:/data
+      - ./init:/docker-entrypoint-initdb.d
+    restart: unless-stopped
+    networks:
+      - stock-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: stock-market-api
+    environment:
+      - DB_HOST=${DB_HOST:-host.docker.internal}
+      - DB_PORT=${DB_PORT:-5433}
+      - DB_NAME=${DB_NAME:-merolagani_pg}
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - PORT=${PORT:-3000}
+      - NODE_ENV=${NODE_ENV:-development}
+      - CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING:-true}
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app:delegated
+      - /app/node_modules
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    networks:
+      - stock-network
+
+volumes:
+  postgres_data:
+
+networks:
+  stock-network:
+    driver: bridge 

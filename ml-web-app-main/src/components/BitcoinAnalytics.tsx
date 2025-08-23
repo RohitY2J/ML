@@ -1,0 +1,54 @@
+"use client"
+
+import React from 'react';
+import PercentageBar from './PercentageBar';
+import { useTheme } from '@/context/ThemeContext';
+
+const BitcoinAnalytics: React.FC = () => {
+  const { theme } = useTheme();
+  
+  const cardBgColor = theme === 'dark' ? 'bg-dark-light' : 'bg-gray-300/40';
+  const textColor = theme === 'dark' ? 'text-[#D1D4DC]' : 'text-black-100';
+
+  return (
+    <div className="flex flex-col p-6">
+      <h2 className={`text-[20px] font-medium mb-4 ${textColor}`}>NEPSE Analytics</h2>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Previous 3 Days Close Price */}
+        <div className={`${cardBgColor} p-5 rounded-lg flex flex-col`}>
+          <h3 className={`text-[13px] font-medium mb-4 ${textColor}`}>Previous 3 Days Close Price</h3>
+          <div className="flex-1">
+            <PercentageBar 
+              segments={[
+                { label: "04-15", value: 479.73, percentage: 479.73, color: "blue" },
+                { label: "04-16", value: 498.92, percentage: 498.92, color: "green" },
+                { label: "04-17", value: 500.35, percentage: 500.35, color: "orange" },
+              ]} 
+            />
+          </div>
+        </div>
+
+        {/* 52 Week Range */}
+        <div className={`${cardBgColor} p-5 rounded-lg flex flex-col`}>
+          <h3 className={`text-[13px] font-medium mb-4 ${textColor}`}>52 Week High / 52 Week Low</h3>
+          <div className="flex-1">
+            <PercentageBar 
+              segments={[
+                { label: "High", value: 700.00, percentage: 50, color: "blue" },
+                { label: "Low", value: 419.00, percentage: 50, color: "green" }
+              ]} 
+            />
+          </div>
+        </div>
+
+        {/* Market Breadth - Full Width
+        <div className="col-span-1 md:col-span-2">
+          <MarketBreadth />
+        </div> */}
+      </div>
+    </div>
+  );
+};
+
+export default BitcoinAnalytics; 

@@ -1,0 +1,55 @@
+FROM python:3.9-slim
+
+# Install system packages required for building TA-Lib and other Python packages
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    wget \
+    curl \
+    git \
+    libffi-dev \
+    libssl-dev \
+    python3-dev \
+    gfortran \
+    make \
+    gcc \
+    autoconf \
+    automake \
+    libtool \
+    && apt-get clean
+
+# Download and install TA-Lib C library (v0.6.4)
+WORKDIR /tmp
+RUN wget https://github.com/TA-Lib/ta-lib/archive/refs/tags/v0.6.4.tar.gz -O ta-lib-0.6.4-src.tar.gz && \
+    tar -xzf ta-lib-0.6.4-src.tar.gz && \
+    cd ta-lib-0.6.4 && \
+    autoreconf -i && \
+    ./configure --prefix=/usr && \
+    make -j$(nproc) || make && \
+    make install && \
+    cd /tmp && rm -rf ta-lib-0.6.4 ta-lib-0.6.4-src.tar.gz && \
+    ldconfig
+
+# Set the dynamic linker path for TA-Lib
+ENV LD_LIBRARY_PATH="/usr/lib:${LD_LIBRARY_PATH}"
+
+# Set database connection environment variables
+ENV DB_HOST=host.docker.internal
+ENV DB_PORT=5433
+ENV DB_NAME=merolagani_pg
+ENV DB_USER=postgres
+ENV DB_PASSWORD=postgres
+
+# Copy and install Python requirements
+WORKDIR /app
+COPY scripts/requirements.txt .
+RUN pip install --upgrade pip
+RUN pip install numpy  # TA-Lib needs numpy to be preinstalled
+
+# Install remaining requirements
+RUN pip install -r requirements.txt
+
+# Copy app code (including scripts)
+COPY . .
+
+# Command to run the script
+CMD ["./scripts/run_all.sh"] 

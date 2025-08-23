@@ -1,0 +1,72 @@
+import React from "react";
+import { useTheme } from "@/context/ThemeContext";
+
+interface Gainer {
+  symbol: string;
+  ltp: number;
+  change: number;
+  qty: number;
+}
+
+const Gainers: React.FC = () => {
+  const { theme } = useTheme();
+
+  const bgColor = theme === "dark" ? "bg-dark-default" : "bg-white";
+  const textColor = theme === "dark" ? "text-[#D1D4DC]" : "text-gray-900";
+  const secondaryTextColor =
+    theme === "dark" ? "text-[#9598A1]" : "text-gray-500";
+  const positiveColor = theme === "dark" ? "text-[#26A69A]" : "text-green-500";
+  const borderColor = theme === "dark" ? "border-[#2A2E39]" : "border-gray-200";
+
+  const gainers: Gainer[] = [
+    { symbol: "CREST", ltp: 1679.1, change: 10, qty: 1330 },
+    { symbol: "NMIC", ltp: 2031.1, change: 10, qty: 4840 },
+    { symbol: "BPCL", ltp: 534.1, change: 9.99, qty: 731242 },
+    { symbol: "OMPL", ltp: 395.2, change: 9.99, qty: 150 },
+    { symbol: "PHCL", ltp: 603.99, change: 9.98, qty: 118746 }
+  ];
+
+  return (
+    <div className={`${bgColor} p-4`}>
+      <h3 className={`text-sm font-semibold mb-4 ${textColor}`}>Top Gainers</h3>
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr className={`text-left text-11 ${secondaryTextColor}`}>
+              <th className="pb-2">Symbol</th>
+              <th className="pb-2">LTP</th>
+              <th className="pb-2">% Change</th>
+              <th className="pb-2">Qty</th>
+            </tr>
+          </thead>
+          <tbody className="text-sm">
+            {gainers.map((gainer) => (
+              <tr
+                key={gainer.symbol}
+                className={`border-b ${borderColor} last:border-b-0`}
+              >
+                <td className={`py-2 text-11 font-semibold ${textColor}`}>
+                  {gainer.symbol}
+                </td>
+                <td className={`py-2 text-11 ${textColor}`}>
+                  {gainer.ltp.toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </td>
+                <td className={`py-2 text-11 ${positiveColor}`}>
+                  +{gainer.change.toFixed(2)}
+                </td>
+                <td className={`py-2 text-11 ${textColor}`}>
+                  {gainer.qty.toLocaleString()}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+export default Gainers;
