@@ -1,6 +1,6 @@
 "use client";
 
-import PriceStats from "@/components/PriceStats";
+import PriceStats, { Stats } from "@/components/PriceStats";
 import Chart from "@/components/Chart";
 import NewsSection from "@/components/NewsSection";
 import CommunitySentiment from "@/components/CommunitySentiment";
@@ -13,6 +13,8 @@ import Gainers from "./Gainers";
 import MarketBreadth from "./MarketBreadth";
 import MarketTicker from "./MarketTicker";
 import { marketData } from "@/constants/mockdata";
+import axiosInstance from "@/lib/axios";
+import { useEffect, useState } from "react";
 
 export default function Dashboard() {
   const { isSidebarExpanded } = useSidebar();
@@ -20,6 +22,28 @@ export default function Dashboard() {
   const borderColor = theme === "dark" ? "border-[#2A2E39]" : "border-gray-200";
   const bgColor = theme === "dark" ? "bg-dark-default" : "bg-white";
   const scrollbarColor = theme === "dark" ? "scrollbar-dark" : "scrollbar-light";
+  const [priceStatsData, setPriceStatsDataetZonesData] = useState<Stats | undefined>(undefined);
+  
+
+  const fetchDailyPriceStatsData = async() => {
+    try {
+      // Fetch support and resistance zones
+      const response = await axiosInstance.get(
+        `/api/stocks/dailyPriceStats/NEPSE`
+      );
+      console.log(response.data.data);
+      setPriceStatsDataetZonesData(response.data.data);
+    }
+    catch (error) {
+      console.error("Error fetching analysis data:", error);
+    } finally {
+      //setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchDailyPriceStatsData();
+  }, []);
 
   return (
     <div className={`flex h-[calc(100vh)] ${bgColor}`}>
@@ -27,8 +51,8 @@ export default function Dashboard() {
         className={`shrink-0 w-[330px] min-w-[329px] overflow-y-auto border-r ${borderColor} ${scrollbarColor}`}
       >
         <div className="flex flex-col gap-4">
-          <PriceStats />
-          <MarketBreadth />
+          <PriceStats stats={priceStatsData}/>
+          <MarketBreadth marketStats={priceStatsData} />
           <SocialLinks />
           <CommunitySentiment />
           <Gainers />

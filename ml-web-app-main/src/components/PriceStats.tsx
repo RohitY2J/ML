@@ -3,8 +3,22 @@
 import React from "react";
 import Image from "next/image";
 import { useTheme } from "@/context/ThemeContext";
+export interface PriceStatsProps {
+  stats?: Stats
+}
 
-const PriceStats: React.FC = () => {
+export interface Stats{
+  currentPrice?: number,
+  volume?: number,
+  percentChange?: number,
+  advanced?: number,
+  declined?: number,
+  unchanged?: number 
+}
+
+const PriceStats: React.FC<PriceStatsProps> = ({stats= {}}) => {
+  
+  console.log(`Price stats data props: ${stats}`);
   const { theme } = useTheme();
 
   const bgColor = theme === "dark" ? "bg-dark-default" : "bg-white";
@@ -31,8 +45,8 @@ const PriceStats: React.FC = () => {
         </div>
       </div>
       <div className="flex items-center mt-3">
-        <p className={`text-32 font-bold ${textColor}`}>2675.62</p> &nbsp;&nbsp;
-        <p className={`text-xs ${positiveColor} tracking-wide`}>+0.39%</p>
+        <p className={`text-32 font-bold ${textColor}`}>{stats.currentPrice}</p> &nbsp;&nbsp;
+        <p className={`text-xs ${positiveColor} tracking-wide`}>{stats.percentChange}</p>
       </div>
       <div className="flex flex-col gap-2">
         <div className={`px-1 py-2 border ${bgCardColor} ${borderColor} rounded-lg`}>
@@ -40,7 +54,7 @@ const PriceStats: React.FC = () => {
             Volume (24h)
           </p>
           <div className="flex items-center justify-center gap-1">
-            <p className={`text-sm font-semibold ${textColor}`}>8,586,004,334.25</p>
+            <p className={`text-sm font-semibold ${textColor}`}>{stats.volume}</p>
           </div>
         </div>
         <div className={`px-1 py-2 border ${bgCardColor} ${borderColor} rounded-lg`}>

@@ -1,13 +1,19 @@
 import { useTheme } from "@/context/ThemeContext";
+import { Stats } from "./PriceStats";
 
-export default function MarketBreadth() {
+export interface MarketStatsProp {
+  marketStats?: Stats
+}
+  
+  
+const MarketBreadth: React.FC<MarketStatsProp> = ({marketStats= {}}) => {
   const { theme } = useTheme();
   const textColor = theme === "dark" ? "text-[#D1D4DC]" : "text-gray-900";
 
   const stats = [
-    { label: "Advanced", value: 82, color: "text-green-500", bgColor: theme === 'dark' ? 'bg-green-500/10' : 'bg-green-200/50' },
-    { label: "Declined", value: 164, color: "text-red-500", bgColor: theme === 'dark' ? 'bg-red-500/10' : 'bg-red-200/50' },
-    { label: "Unchanged", value: 1, color: "text-yellow-500", bgColor: theme === 'dark' ? 'bg-yellow-500/10' : 'bg-yellow-200/50' },
+    { label: "Advanced", value: marketStats.advanced, color: "text-green-500", bgColor: theme === 'dark' ? 'bg-green-500/10' : 'bg-green-200/50' },
+    { label: "Declined", value: marketStats.declined, color: "text-red-500", bgColor: theme === 'dark' ? 'bg-red-500/10' : 'bg-red-200/50' },
+    { label: "Unchanged", value: marketStats.unchanged, color: "text-yellow-500", bgColor: theme === 'dark' ? 'bg-yellow-500/10' : 'bg-yellow-200/50' },
   ];
 
   return (
@@ -30,3 +36,5 @@ export default function MarketBreadth() {
     </div>
   );
 } 
+
+export default MarketBreadth;
