@@ -240,7 +240,7 @@ const Chart: React.FC = () => {
             "paneProperties.gridProperties.horzLinesVisible": false,
             "scalesProperties.lineColor": theme === "dark" ? "#2a2e39" : "#e0e3eb",
             "scalesProperties.textColor": theme === "dark" ? "#d1d4dc" : "#131722",
-            "mainSeriesProperties.style": 1,
+            "mainSeriesProperties.style": 1, // 1 is for candles
             "mainSeriesProperties.candleStyle.upColor": "#26a69a",
             "mainSeriesProperties.candleStyle.downColor": "#ef5350",
             "mainSeriesProperties.candleStyle.borderUpColor": "#26a69a",
