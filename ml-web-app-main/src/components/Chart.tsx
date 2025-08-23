@@ -7,19 +7,150 @@ import { CustomDatafeed } from "@/utils/CustomDatafeed";
 
 declare global {
   interface Window {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     TradingView: any;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     Datafeeds: any;
   }
 }
 
+// NEPSE symbols 
+const nepseSymbols = [
+    "NHPC",
+    "BPCL",
+    "CHCL",
+    "AHPC",
+    "SHPC",
+    "RIDI",
+    "BARUN",
+    "API",
+    "NGPL",
+    "KKHC",
+    "DHPL",
+    "AKPL",
+    "SPDL",
+    "UMHL",
+    "CHL",
+    "HPPL",
+    "NHDL",
+    "RADHI",
+    "PMHPL",
+    "KPCL",
+    "AKJCL",
+    "JOSHI",
+    "UPPER",
+    "GHL",
+    "UPCL",
+    "MHNL",
+    "PPCL",
+    "HURJA",
+    "UNHPL",
+    "RHPL",
+    "SJCL",
+    "HDHPC",
+    "LEC",
+    "SSHL",
+    "MEN",
+    "UMRH",
+    "GLH",
+    "SHEL",
+    "RURU",
+    "MKJC",
+    "SAHAS",
+    "TPC",
+    "SPC",
+    "NYADI",
+    "MBJC",
+    "BNHC",
+    "GVL",
+    "BHL",
+    "RFPL",
+    "DORDI",
+    "BHDC",
+    "HHL",
+    "UHEWA",
+    "SGHC",
+    "MHL",
+    "USHEC",
+    "RHGCL",
+    "SPHL",
+    "PPL",
+    "SIKLES",
+    "EHPL",
+    "PHCL",
+    "BHPL",
+    "SMHL",
+    "SPL",
+    "SMH",
+    "MKHC",
+    "AHL",
+    "TAMOR",
+    "MHCL",
+    "SMJC",
+    "MAKAR",
+    "MKHL",
+    "DOLTI",
+    "BEDC",
+    "MCHL",
+    "IHL",
+    "MEL",
+    "RAWA",
+    "USHL",
+    "TSHL",
+    "KBSH",
+    "MEHL",
+    "ULHC",
+    "MANDU",
+    "BGWT",
+    "MSHL",
+    "MMKJL",
+    "TVCL",
+    "VLUCL",
+    "CKHL",
+    "SANVI",
+    "SHL", "TRH", "OHL", "CGH", "KDL", "CITY",
+    "NABIL",
+    "NIMB",
+    "SCB",
+    "HBL",
+    "SBI",
+    "EBL",
+    "NICA",
+    "MBL",
+    "LSL",
+    "KBL",
+    "SBL",
+    "SANIMA",
+    "NMB",
+    "PRVU",
+    "GBIME",
+    "CZBIL",
+    "PCBL",
+    "ADBL",
+    "NBL",
+    "NABBC",
+    "EDBL",
+    "LBBL",
+    "MDB",
+    "MLBL",
+    "GBBL",
+    "JBBL",
+    "CORBL",
+    "KSBBL",
+    "SADBL",
+    "SHINE",
+    "MNBBL",
+    "SINDU",
+    "GRDBL",
+    "SAPDBL",
+  ];
+
 const Chart: React.FC = () => {
   const container = useRef<HTMLDivElement>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [widget, setWidget] = useState<any>(null);
-  const [currentSymbol, setCurrentSymbol] = useState<string>("NEPSE");
+  const [currentSymbol, setCurrentSymbol] = useState<string>("ADBL");
   const [interval, setInterval] = useState<string>("1D");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [filteredSymbols, setFilteredSymbols] = useState<string[]>(nepseSymbols);
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const router = useRouter();
   const { theme } = useTheme();
 
@@ -109,7 +240,7 @@ const Chart: React.FC = () => {
             "paneProperties.gridProperties.horzLinesVisible": false,
             "scalesProperties.lineColor": theme === "dark" ? "#2a2e39" : "#e0e3eb",
             "scalesProperties.textColor": theme === "dark" ? "#d1d4dc" : "#131722",
-            "mainSeriesProperties.style": 1, // 1 is for candles
+            "mainSeriesProperties.style": 1,
             "mainSeriesProperties.candleStyle.upColor": "#26a69a",
             "mainSeriesProperties.candleStyle.downColor": "#ef5350",
             "mainSeriesProperties.candleStyle.borderUpColor": "#26a69a",
@@ -138,6 +269,8 @@ const Chart: React.FC = () => {
           const chart = tvWidget.activeChart();
           chart.onSymbolChanged().subscribe(null, (symbol: { name: string }) => {
             setCurrentSymbol(symbol.name);
+            setSearchQuery(symbol.name);
+            setIsDropdownOpen(false);
           });
           setWidget(tvWidget);
         });
@@ -162,15 +295,35 @@ const Chart: React.FC = () => {
   };
 
   const handleSymbolChange = (newSymbol: string) => {
-    setCurrentSymbol(newSymbol);
-    if (widget) {
-      widget.setSymbol(newSymbol, interval, () => {
-        const chart = widget.activeChart();
-        if (chart) {
-          chart.resetData();
-        }
-      });
+    if (nepseSymbols.includes(newSymbol.toUpperCase())) {
+      setCurrentSymbol(newSymbol.toUpperCase());
+      setSearchQuery(newSymbol.toUpperCase());
+      setIsDropdownOpen(false);
+      if (widget) {
+        widget.setSymbol(newSymbol.toUpperCase(), interval, () => {
+          const chart = widget.activeChart();
+          if (chart) {
+            chart.resetData();
+          }
+        });
+      }
     }
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value.toUpperCase();
+    setSearchQuery(query);
+    setFilteredSymbols(
+      nepseSymbols.filter((symbol) =>
+        symbol.toUpperCase().includes(query)
+      )
+    );
+    setIsDropdownOpen(true);
+  };
+
+  const handleSymbolSelect = (symbol: string) => {
+    handleSymbolChange(symbol);
+    setIsDropdownOpen(false);
   };
 
   const handleEditClick = () => {
@@ -184,16 +337,32 @@ const Chart: React.FC = () => {
         <div className="flex items-center gap-4">
           {/* Symbol Search */}
           <div className={`relative ${buttonBgColor} rounded-lg`}>
-            {/* TODO: use onEnter or onSubmit event to handle input change  */}
-            {/* TODO: handle search params adding logic on handleSubmit change with ?stock={stockname}  */}
-
             <input
               type="text"
-              placeholder="Search symbol..."
-              value={currentSymbol}
-              onChange={(e) => handleSymbolChange(e.target.value)}
-              className={`px-3 py-2 text-xs bg-transparent ${buttonTextColor} placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg`}
+              placeholder="Search NEPSE symbol..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+              className={`px-3 py-2 text-xs bg-transparent ${buttonTextColor} placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg w-40`}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSymbolChange(searchQuery);
+                  setIsDropdownOpen(false);
+                }
+              }}
             />
+            {isDropdownOpen && searchQuery && filteredSymbols.length > 0 && (
+              <ul className={`absolute z-10 mt-1 max-h-60 w-full overflow-auto ${theme === "dark" ? "bg-[#1e222d]" : "bg-white"} border border-gray-300 rounded-lg shadow-lg`}>
+                {filteredSymbols.map((symbol) => (
+                  <li
+                    key={symbol}
+                    onClick={() => handleSymbolSelect(symbol)}
+                    className={`px-3 py-2 text-xs cursor-pointer ${theme === "dark" ? "text-[#D1D4DC] hover:bg-[#2a2e39]" : "text-gray-900 hover:bg-gray-100"}`}
+                  >
+                    {symbol}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
           <div className={`relative flex ${buttonBgColor} rounded-lg p-1 px-3 gap-5`}>
             <button
@@ -228,7 +397,6 @@ const Chart: React.FC = () => {
             >
               1Y
             </button>
-            {/* Sliding background */}
             <div
               className={`absolute h-[calc(100%-8px)] w-[calc(25%-4px)] ${buttonActiveBgColor} rounded-md transition-all duration-300 ease-in-out ${
                 interval === "1D"
@@ -259,7 +427,7 @@ const Chart: React.FC = () => {
                 d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
               />
             </svg>
-             MeroLagani Ai
+            MeroLagani Ai
           </button>
         </div>
       </div>
