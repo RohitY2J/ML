@@ -127,8 +127,8 @@ const ChartControls: React.FC<ChartControlsProps> = ({
                 overrides: {
                   backgroundColor:
                     theme === "dark"
-                      ? "rgba(0, 197, 33, 0.3)"
-                      : "rgba(0, 197, 33, 0.3)",
+                      ? "rgba(86, 243, 112, 0.3)"
+                      : "rgba(86, 243, 112, 0.3)",
                   showLabel: true,
                   text: `Support Zone ${zone.zone_number}`,
                   textcolor:
