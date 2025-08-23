@@ -50,6 +50,7 @@ const ChartControls: React.FC<ChartControlsProps> = ({
   const [zonesData, setZonesData] = useState<ZonesResponse | null>(null);
   const [trendlinesData, setTrendlinesData] =
     useState<TrendlinesResponse | null>(null);
+  const [shapeIds, setShapeIds] = useState<string[]>([]);
   const { theme } = useTheme();
 
   const bgColor = theme === "dark" ? "bg-dark-default" : "bg-white";
@@ -100,6 +101,11 @@ const ChartControls: React.FC<ChartControlsProps> = ({
         if (!activeChart) {
           return;
         }
+        console.log(shapeIds);
+        shapeIds.forEach(id => {
+          //console.log(activeChart.getShapeById(id));
+          //activeChart.getShapeById(id);
+        });
         // Clear existing shapes
         activeChart.removeAllShapes();
         // Get the visible range of the chart
@@ -116,18 +122,13 @@ const ChartControls: React.FC<ChartControlsProps> = ({
               ],
               {
                 shape: "rectangle",
-                disableSelection: false,
-                disableSave: false,
+                disableSelection: true,
+                disableSave: true,
                 overrides: {
                   backgroundColor:
                     theme === "dark"
-                      ? "rgba(207, 215, 196, 0.1)"
-                      : "rgba(207, 215, 196, 0.1)",
-                  borderColor:
-                    theme === "dark"
-                      ? "rgb(207, 215, 196)"
-                      : "rgb(207, 215, 196)",
-                  borderWidth: 1,
+                      ? "rgba(0, 197, 33, 0.3)"
+                      : "rgba(0, 197, 33, 0.3)",
                   showLabel: true,
                   text: `Support Zone ${zone.zone_number}`,
                   textcolor:
@@ -137,15 +138,14 @@ const ChartControls: React.FC<ChartControlsProps> = ({
                   fontsize: 12,
                   bold: true,
                   lineStyle: 0,
-                  lineWidth: 1,
+                  linewidth: 0,
                   showPrice: true,
                   priceLineColor:
                     theme === "dark"
                       ? "rgb(207, 215, 196)"
                       : "rgb(207, 215, 196)",
                   priceLineWidth: 1,
-                  priceLineStyle: 0,
-                  linewidth: 1,
+                  priceLineStyle: 0
                 },
               }
             );
@@ -153,7 +153,7 @@ const ChartControls: React.FC<ChartControlsProps> = ({
         }
         // Draw resistance zones if enabled
         if (showResistanceZones && zonesData.resistance_zones) {
-          zonesData.resistance_zones.forEach((zone: Zone) => {
+          zonesData.resistance_zones.forEach(async (zone: Zone) => {
             const top = Math.max(
               parseFloat(zone.top_price),
               parseFloat(zone.bottom_price)
@@ -165,39 +165,35 @@ const ChartControls: React.FC<ChartControlsProps> = ({
             const buffer = (top - bottom) * 0.1 || 1; // fallback to 1 if zone is flat
             const displayTop = top + buffer;
             const displayBottom = bottom - buffer;
-            activeChart.createMultipointShape(
+
+            let id = await activeChart.createMultipointShape(
               [
                 { time: startTime, price: displayTop },
                 { time: endTime, price: displayBottom },
               ],
               {
                 shape: "rectangle",
-                disableSelection: false,
-                disableSave: false,
-                hitTest: true, // Try to make the shape fully clickable (if supported)
-                selectable: true, // Try to make the shape fully clickable (if supported)
+                disableSelection: true, // Prevent selection/movement
+                disableSave: false, // Allow saving (optional)
+                hitTest: false, // Disable click/hover interactions
+                selectable: false, // Prevent selection
+                //lock: true, // Explicitly lock the shape (TradingView-specific)
                 overrides: {
-                  backgroundColor:
-                    theme === "dark"
-                      ? "rgba(239,68,68,0.5)"
-                      : "rgba(239,68,68,0.3)",
-                  borderColor: theme === "dark" ? "#f87171" : "#ef4444",
-                  borderWidth: 2,
-                  showLabel: true,
+                  backgroundColor: "rgba(255,0,0,0.3)", // Red with 30% opacity
+                  borderColor: "rgba(0,0,0,0)", // Explicitly transparent border
+                  borderWidth: 0, // No border thickness
+                  showLabel: true, // Keep label
                   text: `Resistance Zone ${zone.zone_number}`,
-                  textcolor: theme === "dark" ? "#f87171" : "#ef4444",
+                  color: theme === "dark" ? "#f87171" : "#ef4444",
                   fontsize: 16,
-                  bold: true,
-                  lineStyle: 0,
-                  lineWidth: 2,
-                  showPrice: true,
-                  priceLineColor: theme === "dark" ? "#f87171" : "#ef4444",
-                  priceLineWidth: 2,
-                  priceLineStyle: 0,
-                  linewidth: 2,
+                  linewidth: 0,
+                  showPrice: false, // Disable price lines to avoid confusion
+                  backgroundTransparency: 0.7, // Explicit 30% opacity (TradingView-specific)
+                  borderVisible: false, // Explicitly hide border (TradingView-specific)
                 },
               }
             );
+            setShapeIds((prev) => [...prev, id]);
           });
         }
         // Draw trendlines if enabled
@@ -216,8 +212,8 @@ const ChartControls: React.FC<ChartControlsProps> = ({
               ],
               {
                 shape: "trend_line",
-                disableSelection: false,
-                disableSave: false,
+                disableSelection: true,
+                disableSave: true,
                 overrides: {
                   linecolor: theme === "dark" ? "#EBEBEB" : "#666666",
                   linewidth: 1,
