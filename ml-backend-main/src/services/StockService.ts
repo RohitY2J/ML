@@ -1,4 +1,4 @@
-import { StockData, StockModel } from '../models/StockModel';
+import { PriceStats, StockData, StockModel } from '../models/StockModel';
 import logger from '../utils/logger';
 
 export async function getDailyData(symbol: string, startDate?: string, endDate?: string): Promise<StockData[]> {
@@ -9,6 +9,19 @@ export async function getDailyData(symbol: string, startDate?: string, endDate?:
     return data;
   } catch (error) {
     logger.error('Error in getDailyDataService:', { symbol, error });
+    throw error;
+  }
+}
+
+export async function getLatestPriceStats(symbol: string): Promise<PriceStats>{
+  try{
+    logger.info('StockService: Fetching price stats data', { symbol });
+    const data = await StockModel.getLatestPriceStats(symbol);
+    logger.info('StockService: Retrieved price stats data', { symbol });
+    return data;
+  }
+  catch(error){
+    logger.error('Error in getting latest price status:', { symbol, error });
     throw error;
   }
 }

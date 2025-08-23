@@ -11,6 +11,15 @@ export interface StockData {
   volume: number;
 }
 
+export interface PriceStats{
+  currentPrice: number;
+  percentChange: number;
+  volume: number;
+  advanced: number;
+  declined: number;
+  unchanged: number;
+}
+
 export class StockModel {
   static async getDailyData(symbol: string, startDate?: string, endDate?: string): Promise<StockData[]> {
     try {
@@ -41,6 +50,48 @@ export class StockModel {
       throw error;
     }
   }
+
+  static async getLatestPriceStats(symbol: string, startDate?: string, endDate?: string): Promise<PriceStats> {
+    try {
+      let query = `
+        SELECT date, symbol, open, high, low, close, volume
+        FROM daily_data
+        WHERE symbol = 'NEPSE'
+        order by date desc
+        limit 1;
+      `;
+      const params: any[] = [symbol];
+      const result = await pool.query(query, );
+      const nepseData = result.rows[0];
+
+
+      let tradingSignalQuery = `
+        SELECT 
+            COUNT(CASE WHEN change_percent > 0 AND symbol != 'NEPSE' THEN 1 END) AS positive_count,
+            COUNT(CASE WHEN change_percent < 0 AND symbol != 'NEPSE' THEN 1 END) AS negative_count,
+            COUNT(CASE WHEN change_percent = 0 AND symbol != 'NEPSE' THEN 1 END) AS zero_count,
+            (SELECT change_percent FROM trading_signals n WHERE n.symbol = 'NEPSE' LIMIT 1) AS nepse_change_percent
+        FROM trading_signals
+        WHERE symbol != 'NEPSE';
+      `;
+
+      const tradingSignalResult = await pool.query(tradingSignalQuery, );
+      const tradingSignalData = tradingSignalResult.rows[0];
+
+      logger.debug('Daily data fetched', { symbol, count: result.rows.length });
+      return {
+        currentPrice: nepseData.close,
+        volume: nepseData.volume,
+        percentChange: tradingSignalData.nepse_change_percent,
+        advanced: tradingSignalData.positive_count,
+        declined: tradingSignalData.negative_count,
+        unchanged: tradingSignalData.zero_count
+      }
+    } catch (error) {
+      logger.error('Daily data fetch failed', { symbol, error });
+      throw error;
+    }
+  } 
 
   static async getIntradayData(symbol: string, startDate?: string, endDate?: string): Promise<StockData[]> {
     try {

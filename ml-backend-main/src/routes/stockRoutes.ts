@@ -11,4 +11,7 @@ router.get('/daily/:symbol', validate(stockDetailSchema), StockController.getDai
 // Get intraday data for a symbol
 router.get('/intraday/:symbol', validate(stockDetailSchema), StockController.getIntradayData);
 
+// Get dashboard price stats data
+router.get('/dailyPriceStats/:symbol', validate(stockDetailSchema), StockController.getLatestPriceStats)
+
 export default router; 

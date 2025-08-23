@@ -28,6 +28,30 @@ export const getDailyData = async (req: Request, res: Response) => {
   }
 };
 
+
+export const getLatestPriceStats = async (req: Request, res: Response) => {
+  try {
+    const { symbol } = req.params;
+    //const { startDate, endDate } = req.query;
+
+    if (!symbol) {
+      logger.warn('StockController: Missing symbol parameter');
+      return sendValidationError(res, 'Symbol is required');
+    }
+
+    logger.info('StockController: Fetching latest price stats for', { symbol });
+    const data = await StockService.getLatestPriceStats(
+      symbol
+    );
+
+    logger.info('StockController: Successfully fetched daily data', { symbol });
+    sendSuccess(res, data, 'Daily stock data retrieved successfully');
+  } catch (error) {
+    logger.error('StockController: Error fetching daily data', { error });
+    sendError(res, 'Failed to retrieve daily stock data', 500, error);
+  }
+};
+
 export const getIntradayData = async (req: Request, res: Response) => {
   try {
     const { symbol } = req.params;
