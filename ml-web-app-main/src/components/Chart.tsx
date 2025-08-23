@@ -146,7 +146,7 @@ const nepseSymbols = [
 const Chart: React.FC = () => {
   const container = useRef<HTMLDivElement>(null);
   const [widget, setWidget] = useState<any>(null);
-  const [currentSymbol, setCurrentSymbol] = useState<string>("ADBL");
+  const [currentSymbol, setCurrentSymbol] = useState<string>("NEPSE");
   const [interval, setInterval] = useState<string>("1D");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [filteredSymbols, setFilteredSymbols] = useState<string[]>(nepseSymbols);
