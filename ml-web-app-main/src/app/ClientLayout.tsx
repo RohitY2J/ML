@@ -11,10 +11,11 @@ function ClientLayoutContent({ children }: { children: React.ReactNode }) {
 
   // Check if we're on an edit page
   const isEditPage = pathname?.includes('/edit');
+  const isAdminPage = pathname?.includes('/admin');
 
   return (
     <div className="flex h-full w-full overflow-hidden">
-      {!isEditPage && (
+      {!isEditPage && !isAdminPage && (
         <Sidebar 
           onCollapseChange={setIsSidebarExpanded}
           onPathChange={() => {}}
