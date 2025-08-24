@@ -40,44 +40,11 @@ interface TradeFormProps {
 // TradeForm Component
 const TradeForm: React.FC<TradeFormProps> = ({ theme }) => {
   // Mock data with explicit typing
-  const symbolData: { [key: string]: SymbolData } = {
-    NEPSE: {
-      signal: "BUY",
-      buy_date: "2024-01-15",
-      buy_price: "2450.50",
-      adj_buy_price: "2455.75",
-      sold_date: "",
-      sold_price: "",
-      current_strategy: "Long Term Hold",
-      point_change: "125.30",
-      profit_loss_pct: "5.12",
-      buy_range: "2400-2500",
-      sell_range: "2800-3000",
-      risk_reward_ratio: "1:3",
-      stop_loss: "2200",
-      trade_result: "Ongoing",
-    },
-    NABIL: {
-      signal: "HOLD",
-      buy_date: "2023-12-10",
-      buy_price: "1200.00",
-      adj_buy_price: "1205.25",
-      sold_date: "2024-02-15",
-      sold_price: "1350.00",
-      current_strategy: "Swing Trading",
-      point_change: "150.00",
-      profit_loss_pct: "12.50",
-      buy_range: "1150-1250",
-      sell_range: "1300-1400",
-      risk_reward_ratio: "1:2",
-      stop_loss: "1100",
-      trade_result: "Profit",
-    },
-  };
+  const symbolData: { [key: string]: SymbolData } = {};
 
   // State with proper TypeScript types
   const [selectedSymbol, setSelectedSymbol] = useState<string>("NEPSE");
-  const [formData, setFormData] = useState<SymbolData>(symbolData["NEPSE"]);
+  const [formData, setFormData] = useState<SymbolData | null>(null);
   const [editMode, setEditMode] = useState<boolean>(false);
   const [symbols, setSymbols] = useState<SymbolSchema[]>([]);
 
@@ -118,6 +85,9 @@ const TradeForm: React.FC<TradeFormProps> = ({ theme }) => {
       console.log(transformedData)
       setFormData(transformedData);
     }
+    else{
+      setFormData(null);
+    }
     setEditMode(false);
   };
 
@@ -133,10 +103,31 @@ const TradeForm: React.FC<TradeFormProps> = ({ theme }) => {
 
   // Handle input change
   const handleInputChange = async (field: keyof SymbolData, value: string) => {
-    // setFormData((prev) => ({
-    //   ...prev,
-    //   [field]: value,
-    // }));
+    setFormData((prev) => {
+      // If prev is null, initialize with default SymbolData
+      const defaultData: SymbolData = {
+        id: undefined,
+        symbol: selectedSymbol || undefined,
+        signal: "",
+        buy_date: "",
+        buy_price: "",
+        adj_buy_price: undefined,
+        sold_date: undefined,
+        sold_price: undefined,
+        current_strategy: "",
+        point_change: "",
+        profit_loss_pct: "",
+        buy_range: undefined,
+        sell_range: "",
+        risk_reward_ratio: "",
+        stop_loss: "",
+        trade_result: undefined,
+      };
+      return {
+        ...(prev || defaultData),
+        [field]: value, // Convert empty string to undefined
+      };
+    });
   };
 
   // Handle form submission
@@ -149,23 +140,29 @@ const TradeForm: React.FC<TradeFormProps> = ({ theme }) => {
 
   useEffect(() => {
     fetchSymbolAsync();
+    handleSymbolChange("NEPSE");
   },[])
 
   // Render input field
   const renderField = (label: string, field: keyof SymbolData, type: string = "text") => (
     <div className="mb-4">
-      <label className={`block text-sm font-medium mb-2 ${textColor}`}>
-        {label.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}
-      </label>
-      <input
-        type={type}
-        value={formData[field]}
-        onChange={(e) => handleInputChange(field, e.target.value)}
-        disabled={!editMode}
-        className={`w-full p-3 rounded-lg border ${borderColor} ${inputBg} ${textColor} 
-          focus:outline-none focus:ring-2 focus:ring-blue-500 
-          ${!editMode ? "opacity-60 cursor-not-allowed" : ""}`}
-      />
+      {formData && Object.keys(formData).length > 0 ? (
+        <>
+          <label className={`block text-sm font-medium mb-2 ${textColor}`}>
+            {label.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}
+          </label>
+          <input
+            type={type}
+            value={formData[field]}
+            onChange={(e) => handleInputChange(field, e.target.value)}
+            disabled={!editMode}
+            className={`w-full p-3 rounded-lg border ${borderColor} ${inputBg} ${textColor} 
+              focus:outline-none focus:ring-2 focus:ring-blue-500 
+              ${!editMode ? "opacity-60 cursor-not-allowed" : ""}`}
+          />
+        </>
+      ) : ""
+    }
     </div>
   );
 
@@ -197,6 +194,7 @@ const TradeForm: React.FC<TradeFormProps> = ({ theme }) => {
             <h3 className={`text-lg font-semibold ${textColor}`}>
               Signal Details - {selectedSymbol}
             </h3>
+            {formData && Object.keys(formData).length > 0 ? (
             <div className="flex gap-2">
               {!editMode ? (
                 <button
@@ -226,10 +224,10 @@ const TradeForm: React.FC<TradeFormProps> = ({ theme }) => {
                   </button>
                 </div>
               )}
-            </div>
+            </div>) : ""}
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {formData && Object.keys(formData).length > 0 ?
+          (<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {renderField("Signal", "signal")}
             {renderField("Buy Date", "buy_date", "date")}
             {renderField("Buy Price", "buy_price", "number")}
@@ -244,7 +242,11 @@ const TradeForm: React.FC<TradeFormProps> = ({ theme }) => {
             {renderField("Risk Reward Ratio", "risk_reward_ratio")}
             {renderField("Stop Loss", "stop_loss")}
             {renderField("Trade Result", "trade_result")}
-          </div>
+          </div>) : (
+              <div className={`text-center py-8 ${textColor}`}>
+                <p className="text-lg">No AI Signal</p>
+              </div>
+            )}
         </div>
       )}
     </div>
@@ -481,7 +483,7 @@ export default function AdminPage() {
         </nav>
 
         {/* Theme Toggle */}
-        <div className="absolute bottom-4 left-2 right-2">
+        {/* <div className="absolute bottom-4 left-2 right-2">
           <button
             onClick={toggleTheme}
             className={`w-full flex items-center gap-3 p-3 rounded-lg ${hoverBg} ${textColor} transition-colors`}
@@ -489,7 +491,7 @@ export default function AdminPage() {
             <Lightbulb size={20} />
             {isSidebarExpanded && <span>Theme</span>}
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Main Content */}
