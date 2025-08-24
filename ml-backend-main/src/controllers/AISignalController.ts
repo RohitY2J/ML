@@ -77,3 +77,15 @@ export const getAISignalsPerSymbolAsync = async (req: Request, res: Response) =>
         sendError(res, 'Failed to retrieve AI trading signals', 500, error);
     }
 };
+
+export const updateAISignals = async (req: Request, res: Response) => {
+    try {
+        const updateAISignals  = req.body;
+        const signals = await AISignalService.updateAISignal(updateAISignals);
+        sendSuccess(res, signals, 'AI trading signals updated successfully');
+        logger.info('AISignalController: Response sent successfully');
+    } catch (error) {
+        logger.error('AISignalController: Error updated AI signals', { error });
+        sendError(res, 'Failed to update AI trading signals', 500, error);
+    }
+}

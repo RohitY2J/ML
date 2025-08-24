@@ -37,6 +37,16 @@ export async function getAISignals(): Promise<AISignal[]> {
     }
 } 
 
+export async function updateAISignal(updatedAISignal: AISignal): Promise<AISignal | undefined>{
+    try {
+        const signals = await AISignalModel.updateAISignalsPerSymbol(updatedAISignal);
+        return signals;
+    } catch (error) {
+        logger.error('Error in getAISignalsService:', { error });
+        throw error;
+    }
+}
+
 export async function getAISignalsPerSymbol(symbol: string): Promise<AISignal | undefined> {
     try {
         const signals = await AISignalModel.getAISignalsPerSymbol(symbol);

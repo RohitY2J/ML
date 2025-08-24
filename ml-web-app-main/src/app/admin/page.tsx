@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTheme } from "@/context/ThemeContext";
-import { ChevronLeft, ChevronRight, Lightbulb, Users, TrendingUp, Bot } from "lucide-react";
+import { ChevronLeft, ChevronRight, Lightbulb, Users, TrendingUp, Bot, Loader2 } from "lucide-react";
 import axiosInstance from "@/lib/axios";
 import { AISignal } from "@/services/api/aiSignals";
 
@@ -47,6 +47,8 @@ const TradeForm: React.FC<TradeFormProps> = ({ theme }) => {
   const [formData, setFormData] = useState<SymbolData | null>(null);
   const [editMode, setEditMode] = useState<boolean>(false);
   const [symbols, setSymbols] = useState<SymbolSchema[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
 
   // Tailwind CSS classes based on theme
   const bgColor = theme === "dark" ? "bg-dark-default" : "bg-white";
@@ -55,16 +57,8 @@ const TradeForm: React.FC<TradeFormProps> = ({ theme }) => {
   const cardBg = theme === "dark" ? "bg-[#1A1D29]" : "bg-gray-50";
   const inputBg = theme === "dark" ? "bg-[#1A1D29]" : "bg-gray-50";
 
-  // Handle symbol change
-  const handleSymbolChange = async (symbol: string) => {
-    console.log(symbol);
-    setSelectedSymbol(symbol);
-
-    const response = await axiosInstance.get(`/api/ai-signals/${symbol}`);
-    console.log(response.data.data);
-    const responseData = response.data.data;
-    if(responseData){
-      const transformedData = {
+  const transformData = (responseData: SymbolData):SymbolData => {
+    const transformedData = {
           id: responseData.id ? responseData.id : undefined,
           adj_buy_price: responseData.adj_buy_price ?? undefined,
           buy_date: responseData.buy_date ?? undefined,
@@ -82,6 +76,21 @@ const TradeForm: React.FC<TradeFormProps> = ({ theme }) => {
           stop_loss: responseData.stop_loss ?? undefined,
           trade_result: responseData.trade_result ?? undefined,
       };
+    return transformedData;
+  }
+
+
+  // Handle symbol change
+  const handleSymbolChange = async (symbol: string) => {
+    setIsLoading(true);
+    console.log(symbol);
+    setSelectedSymbol(symbol);
+
+    const response = await axiosInstance.get(`/api/ai-signals/${symbol}`);
+    console.log(response.data.data);
+    const responseData = response.data.data;
+    if(responseData){
+      const transformedData = transformData(responseData);
       console.log(transformedData)
       setFormData(transformedData);
     }
@@ -89,6 +98,7 @@ const TradeForm: React.FC<TradeFormProps> = ({ theme }) => {
       setFormData(null);
     }
     setEditMode(false);
+    setIsLoading(false);
   };
 
   // Fetch symbol
@@ -131,11 +141,25 @@ const TradeForm: React.FC<TradeFormProps> = ({ theme }) => {
   };
 
   // Handle form submission
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    setIsLoading(true);
     if (selectedSymbol) {
       console.log("Updated data for", selectedSymbol, formData);
+      const response = await axiosInstance.post(
+        `/api/ai-signals/updateAISignal`, formData
+      );
+
+      console.log(response);
+      if(response.data.data){
+        let transformedData = transformData(response.data.data);
+        setFormData(transformedData);
+      }
+      else{
+        setFormData(null);
+      }
       setEditMode(false);
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -146,6 +170,7 @@ const TradeForm: React.FC<TradeFormProps> = ({ theme }) => {
   // Render input field
   const renderField = (label: string, field: keyof SymbolData, type: string = "text") => (
     <div className="mb-4">
+      <LoaderOverlay isVisible={isLoading} theme={theme} />
       {formData && Object.keys(formData).length > 0 ? (
         <>
           <label className={`block text-sm font-medium mb-2 ${textColor}`}>
@@ -398,6 +423,28 @@ const BuySellHoldEditor = () => {
         <button className="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
           Add New Signal
         </button>
+      </div>
+    </div>
+  );
+};
+
+interface LoaderOverlayProps {
+  isVisible: boolean;
+  theme: "dark" | "light";
+}
+
+const LoaderOverlay: React.FC<LoaderOverlayProps> = ({ isVisible, theme }) => {
+  if (!isVisible) return null;
+
+  const overlayBg = theme === "dark" ? "bg-black bg-opacity-50" : "bg-white bg-opacity-50";
+  const loaderBg = theme === "dark" ? "bg-dark-default" : "bg-white";
+  const textColor = theme === "dark" ? "text-white" : "text-gray-900";
+
+  return (
+    <div className={`fixed inset-0 z-50 flex items-center justify-center ${overlayBg}`}>
+      <div className={`${loaderBg} p-6 rounded-lg shadow-lg flex flex-col items-center gap-3`}>
+        <Loader2 className={`w-8 h-8 animate-spin ${textColor}`} />
+        <p className={`${textColor} text-sm font-medium`}>Loading...</p>
       </div>
     </div>
   );
