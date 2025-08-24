@@ -6,6 +6,7 @@ import tradingZoneRoutes from './tradingZoneRoutes';
 import symbolRoutes from './symbolRoutes';
 import tradingSignalRoutes from './tradingSignalRoutes';
 import technicalAnalysisRoutes from './technicalAnalysis';
+import aiSignalRoutes  from './aiSignalRoutes';
 
 const router = Router();
 
@@ -17,6 +18,7 @@ router.use('/trading-zones', tradingZoneRoutes);
 router.use('/symbols', symbolRoutes);
 router.use('/signals', tradingSignalRoutes);
 router.use('/technical-analysis', technicalAnalysisRoutes);
+router.use('/ai-signals', aiSignalRoutes)
 
 // Health check route
 router.get('/health', (req, res) => {

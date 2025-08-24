@@ -6,6 +6,7 @@ import { aiSignalSchema } from '../validations/schemas';
 const router = Router();
 
 // Get AI trading signals
-router.get('/ai-signals', validate(aiSignalSchema), AISignalController.getAISignals);
+router.get('/', validate(aiSignalSchema), AISignalController.getAISignals);
+router.get('/:symbol', validate(aiSignalSchema), AISignalController.getAISignalsPerSymbolAsync)
 
 export default router; 

@@ -36,3 +36,13 @@ export async function getAISignals(): Promise<AISignal[]> {
         throw error;
     }
 } 
+
+export async function getAISignalsPerSymbol(symbol: string): Promise<AISignal | undefined> {
+    try {
+        const signals = await AISignalModel.getAISignalsPerSymbol(symbol);
+        return signals;
+    } catch (error) {
+        logger.error('Error in getAISignalsService:', { error });
+        throw error;
+    }
+} 

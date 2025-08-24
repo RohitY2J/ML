@@ -64,4 +64,16 @@ export const getAISignals = async (req: Request, res: Response) => {
         logger.error('AISignalController: Error fetching AI signals', { error });
         sendError(res, 'Failed to retrieve AI trading signals', 500, error);
     }
-}; 
+};
+
+export const getAISignalsPerSymbolAsync = async (req: Request, res: Response) => {
+    try {
+        const { symbol } = req.params;
+        const signals = await AISignalService.getAISignalsPerSymbol(symbol);
+        sendSuccess(res, signals, 'AI trading signals retrieved successfully');
+        logger.info('AISignalController: Response sent successfully');
+    } catch (error) {
+        logger.error('AISignalController: Error fetching AI signals', { error });
+        sendError(res, 'Failed to retrieve AI trading signals', 500, error);
+    }
+};
