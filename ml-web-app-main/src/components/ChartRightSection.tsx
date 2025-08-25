@@ -22,11 +22,19 @@ import {
   RiArrowRightSLine,
   RiArrowDownSLine,
 } from "react-icons/ri";
+import axiosInstance from "@/lib/axios";
 
 interface ChartRightSectionProps {
   onSymbolChange?: (symbol: string) => void;
   currentSymbol?: string;
   onCollapseChange?: (collapsed: boolean) => void;
+}
+
+interface Watchlist{
+  id: number,
+  stock: string,
+  ltp: number,
+  change: number
 }
 
 const ChartRightSection: React.FC<ChartRightSectionProps> = ({
@@ -61,13 +69,7 @@ const ChartRightSection: React.FC<ChartRightSectionProps> = ({
   } = useChat();
 
   const [isAddStockModalOpen, setIsAddStockModalOpen] = useState(false);
-  const [watchlistData, setWatchlistData] = useState([
-    { sn: 1, stock: "NEPSE", ltp: 2150.45, change: 1.25 },
-    { sn: 2, stock: "NRIC", ltp: 850.75, change: 0.85 },
-    { sn: 3, stock: "NBL", ltp: 450.2, change: -0.35 },
-    { sn: 4, stock: "SCB", ltp: 850.75, change: 0.25 },
-    { sn: 5, stock: "HBL", ltp: 1200.0, change: 0.1 },
-  ]);
+  const [watchlistData, setWatchlistData] = useState<Watchlist[]>([]);
 
   const textColor = theme === "dark" ? "text-[#D1D4DC]" : "text-gray-900";
   const secondaryTextColor = theme === "dark" ? "text-[#9598A1]" : "text-gray-500";
@@ -98,15 +100,14 @@ const ChartRightSection: React.FC<ChartRightSectionProps> = ({
     }
   };
 
-  const handleAddStock = (stock: string) => {
-    // Here you would typically fetch the stock data from your API
-    const newStock = {
-      sn: watchlistData.length + 1,
-      stock,
-      ltp: 0, // This should come from your API
-      change: 0, // This should come from your API
-    };
-    setWatchlistData([...watchlistData, newStock]);
+  const handleAddStock = async (stock: string) => {
+    const response = await axiosInstance.post(
+      `/api/signals/updateToWatchList`, {symbol: stock, toAdd: true}
+    );
+
+    console.log(response);
+    setWatchlistData(response.data.data);
+    //setWatchlistData([...watchlistData, newStock]);
   };
 
   const formatPrice = (price: string | undefined) => {
@@ -163,6 +164,19 @@ const ChartRightSection: React.FC<ChartRightSectionProps> = ({
       onCollapseChange(isCollapsed);
     }
   }, [isCollapsed, onCollapseChange]);
+
+  useEffect(() => {
+    fetchWatchListData();
+  }, [])
+
+  const fetchWatchListData =  async() => {
+    const response = await axiosInstance.get(
+      `/api/signals/getWatchList`
+    );
+
+    console.log(response);
+    setWatchlistData(response.data.data);
+  }
 
   const CollapsibleSection = ({
     title,

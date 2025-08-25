@@ -1,7 +1,7 @@
 import React from "react";
 
 interface WatchlistStock {
-  sn: number;
+  id: number;
   stock: string;
   ltp: number;
   change: number;
@@ -44,13 +44,13 @@ const WatchlistSection: React.FC<WatchlistSectionProps> = ({
             </tr>
           </thead>
           <tbody className="text-sm">
-            {watchlistData.map((stock) => (
+            {watchlistData.map((stock, index) => (
               <tr
-                key={stock.sn}
+                key={stock.id}
                 onClick={() => onStockClick(stock.stock)}
                 className="cursor-pointer hover:opacity-80"
               >
-                <td className={`py-1 text-11 ${textColor}`}>{stock.sn}</td>
+                <td className={`py-1 text-11 ${textColor}`}>{index + 1}</td>
                 <td className={`py-1 text-11 font-semibold ${textColor}`}>
                   {stock.stock}
                 </td>

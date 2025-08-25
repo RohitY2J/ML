@@ -1,20 +1,23 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTheme } from "@/context/ThemeContext";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import AddStockModal from "@/components/AddStockModal";
+import axiosInstance from "@/lib/axios";
+
+interface Watchlist{
+  id: number,
+  stock: string,
+  ltp: number,
+  change: number,
+  signal: string,
+}
 
 export default function WatchlistPage() {
   const { theme } = useTheme();
   const [isAddStockModalOpen, setIsAddStockModalOpen] = useState(false);
-  const [watchlistData, setWatchlistData] = useState([
-    { sn: 1, stock: "NEPSE", ltp: 2150.45, change: 1.25, signal: "BUY" },
-    { sn: 2, stock: "NRIC", ltp: 850.75, change: 0.85, signal: "HOLD" },
-    { sn: 3, stock: "NBL", ltp: 450.2, change: -0.35, signal: "SELL" },
-    { sn: 4, stock: "SCB", ltp: 850.75, change: 0.25, signal: "BUY" },
-    { sn: 5, stock: "HBL", ltp: 1200.0, change: 0.1, signal: "HOLD" },
-  ]);
+  const [watchlistData, setWatchlistData] = useState<Watchlist[]>([]);
 
   const bgColor = theme === "dark" ? "bg-[#1E222D]" : "bg-[#F8FAFD]";
   const textColor = theme === "dark" ? "text-[#D1D4DC]" : "text-gray-900";
@@ -38,19 +41,38 @@ export default function WatchlistPage() {
   };
 
   const handleAddStock = (stock: string) => {
-    const newStock = {
-      sn: watchlistData.length + 1,
-      stock,
-      ltp: 0,
-      change: 0,
-      signal: "HOLD", // Default signal for new stocks
-    };
-    setWatchlistData([...watchlistData, newStock]);
+    // const newStock = {
+    //   sn: watchlistData.length + 1,
+    //   stock,
+    //   ltp: 0,
+    //   change: 0,
+    //   signal: "HOLD", // Default signal for new stocks
+    // };
+    //setWatchlistData([...watchlistData, newStock]);
+    console.log(stock);
   };
 
-  const handleDeleteStock = (stockToDelete: string) => {
-    setWatchlistData(watchlistData.filter((stock) => stock.stock !== stockToDelete));
+  const handleDeleteStock = async (stockToDelete: string) => {
+    const response = await axiosInstance.post(
+      `/api/signals/updateToWatchList`, {symbol: stockToDelete, toAdd: false}
+    );
+
+    console.log(response);
+    setWatchlistData(response.data.data);
   };
+
+  useEffect(() => {
+      fetchWatchListData();
+    }, [])
+  
+  const fetchWatchListData =  async() => {
+    const response = await axiosInstance.get(
+      `/api/signals/getWatchList`
+    );
+
+    console.log(response);
+    setWatchlistData(response.data.data);
+  }
 
   return (
     <div className={`h-full flex flex-col gap-4 p-4 ${pageBgColor}`}>
@@ -61,14 +83,14 @@ export default function WatchlistPage() {
             <h1 className={`text-sm font-semibold ${textColor}`}>Watchlist</h1>
             <p className={`text-11 ${secondaryTextColor}`}>Manage your watchlist stocks</p>
           </div>
-          <button
+          {/* <button
             onClick={() => setIsAddStockModalOpen(true)}
             className={`px-4 py-2 rounded-lg text-11 font-medium ${
               theme === "dark" ? "bg-[#2962FF] hover:bg-[#1E53E5]" : "bg-blue-500 hover:bg-blue-600"
             } text-white transition-colors`}
           >
             + Add Stock
-          </button>
+          </button> */}
         </div>
       </div>
 
@@ -87,9 +109,9 @@ export default function WatchlistPage() {
               </tr>
             </thead>
             <tbody className="text-sm">
-              {watchlistData.map((stock) => (
-                <tr key={stock.sn} className={`border-b ${borderColor} last:border-b-0`}>
-                  <td className={`py-2 text-11 ${textColor}`}>{stock.sn}</td>
+              {watchlistData.map((stock, index) => (
+                <tr key={stock.id} className={`border-b ${borderColor} last:border-b-0`}>
+                  <td className={`py-2 text-11 ${textColor}`}>{index + 1}</td>
                   <td className={`py-2 text-11 font-semibold ${textColor}`}>{stock.stock}</td>
                   <td className={`py-2 text-11 font-semibold ${textColor}`}>{stock.ltp}</td>
                   <td
