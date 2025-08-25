@@ -21,3 +21,6 @@ FROM daily_data
 WHERE symbol NOT IN (SELECT symbol FROM symbols)
 ORDER BY symbol;
 
+---add isWatchedColumn---
+ALTER TABLE symbols
+ADD COLUMN IF NOT EXISTS is_watched BOOLEAN DEFAULT FALSE;
