@@ -49,4 +49,27 @@ export const getCombinedSignals = async (req: Request, res: Response) => {
         logger.error('TradingSignalController: Error fetching historical signals', { error });
         sendError(res, 'Failed to retrieve historical signals', 500, error);
     }
-}; 
+};
+
+export const getWatchList = async (req: Request, res: Response) => {
+    try {
+        
+        const signals = await AnalyticsSignalService.getWatchList();
+        sendSuccess(res, signals, 'WatchList signals retrieved successfully');
+    } catch (error) {
+        logger.error('TradingSignalController: Error fetching watchlist signals', { error });
+        sendError(res, 'Failed to retrieve watchlist signals', 500, error);
+    }
+};
+
+export const updateToWatchList = async (req: Request, res: Response) => {
+    try {
+        const {symbol, toAdd} = req.body;
+        const signals = await AnalyticsSignalService.updateToWatchList(symbol, toAdd);
+        sendSuccess(res, signals, 'Watchlist signals saved successfully');
+    } catch (error) {
+        logger.error('TradingSignalController: Error saving watchlist signals', { error });
+        sendError(res, 'Failed to save watchlist signals', 500, error);
+    }
+};
+

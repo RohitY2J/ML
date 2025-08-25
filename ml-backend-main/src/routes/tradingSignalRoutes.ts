@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import * as TradingSignalController from '../controllers/TradingSignalController';
 import { validate } from '../middleware/validation';
-import { tradingSignalSchema } from '../validations/schemas';
+import { tradingSignalSchema, tradingZoneSchema } from '../validations/schemas';
 
 const router = Router();
 
@@ -10,5 +10,9 @@ router.get('/trading-signals', validate(tradingSignalSchema), TradingSignalContr
 
 // Get combined trading signals (both traditional and AI)
 router.get('/combined-signals', validate(tradingSignalSchema), TradingSignalController.getCombinedSignals);
+
+router.get('/getWatchList', validate(tradingSignalSchema), TradingSignalController.getWatchList);
+
+router.post('/updateToWatchList', validate(tradingSignalSchema), TradingSignalController.updateToWatchList);
 
 export default router; 

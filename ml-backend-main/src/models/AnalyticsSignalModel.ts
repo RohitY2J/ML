@@ -22,6 +22,13 @@ export interface AnalyticsSignal {
     created_at: Date;
 }
 
+export interface WatchListSignal{
+    id: number,
+    stock: string,
+    ltp: number,
+    change: number
+}
+
 export class AnalyticsSignalModel {
     static async getHistoricalSignals(symbol: string): Promise<AnalyticsSignal[]> {
         try {
@@ -60,4 +67,42 @@ export class AnalyticsSignalModel {
             throw error;
         }
     }
+
+    static async updateToWatchList(symbol: string, toAdd: boolean): Promise<WatchListSignal[]> {
+        try {
+            const query = `UPDATE symbols
+                        SET is_watched = ${toAdd}
+                        WHERE symbol = '${symbol}';`;
+    
+            await pool.query(query, );
+            const result = await AnalyticsSignalModel.getWatchListSignal();
+            return result;
+        } catch (error) {
+            logger.error('Current year analytics signals fetch failed', { error });
+            throw error;
+        }
+    }
+
+    static async getWatchListSignal(): Promise<WatchListSignal[]> {
+        try {
+            const query = `SELECT 
+                            ts.id as id,
+                            ts.symbol as stock,
+                            ts.ltp as ltp,
+                            ts.change_percent as change,
+                            ts.signal
+                        FROM trading_signals ts
+                        INNER JOIN symbols s ON ts.symbol = s.symbol
+                        WHERE s.is_watched = true;`;
+
+                        
+            const result = await pool.query(query, );
+            return result.rows;
+        } catch (error) {
+            logger.error('Current year analytics signals fetch failed', { error });
+            throw error;
+        }
+    }
 } 
+
+

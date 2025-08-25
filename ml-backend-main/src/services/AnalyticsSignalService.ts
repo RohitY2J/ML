@@ -1,4 +1,4 @@
-import { AnalyticsSignal, AnalyticsSignalModel } from '../models/AnalyticsSignalModel';
+import { AnalyticsSignal, AnalyticsSignalModel, WatchListSignal } from '../models/AnalyticsSignalModel';
 import logger from '../utils/logger';
 
 export interface FormattedAnalyticsSignal {
@@ -80,6 +80,28 @@ export async function getHistoricalSignals(symbol: string): Promise<FormattedAna
         return formattedSignals;
     } catch (error) {
         logger.error('Error in getHistoricalSignals:', { error, symbol });
+        throw error;
+    }
+} 
+
+
+
+export async function getWatchList(): Promise<WatchListSignal[]> {
+    try {
+        const signals = await AnalyticsSignalModel.getWatchListSignal();
+        return signals;
+    } catch (error) {
+        logger.error('Error in getHistoricalSignals:', { error });
+        throw error;
+    }
+} 
+
+export async function updateToWatchList(symbol: string, toAdd: boolean): Promise<WatchListSignal[]> {
+    try {
+        const signals = await AnalyticsSignalModel.updateToWatchList(symbol, toAdd);
+        return signals;
+    } catch (error) {
+        logger.error('Error in getHistoricalSignals:', { error });
         throw error;
     }
 } 
