@@ -99,6 +99,7 @@ const sectorSymbols = {
     "VLUCL",
     "CKHL",
     "SANVI",
+    "BHCL"
   ],
   hotels: ["SHL", "TRH", "OHL", "CGH", "KDL", "CITY"],
   banks: [
@@ -135,9 +136,123 @@ const sectorSymbols = {
     "MNBBL",
     "SINDU",
     "GRDBL",
-    "SAPDBL",
+    "SAPDBL"
   ],
+  manufacturing: [
+    "BNL",
+    "NLO",
+    "BNT",
+    "UNL",
+    "HDL",
+    "SHIVM",
+    "GCIL",
+    "SONA",
+    "SARBTM",
+    "OMPL"
+  ],
+  tradings: ["STC", "BBC"],
+  insurance: [
+    "NICL",
+    "RBCL",
+    "HEI",
+    "UAIL",
+    "SPIL",
+    "NIL",
+    "PRIN",
+    "SALICO",
+    "IGI",
+    "SICL",
+    "NLG",
+    "SGIC",
+    "NMIC",
+    "NLICL",
+    "NLIC",
+    "LICN",
+    "ALICL",
+    "HLI",
+    "SJLIC",
+    "PMLI",
+    "SRLI",
+    "ILI",
+    "RNLI",
+    "SNLI",
+    "CLI",
+    "GMLI",
+    "CREST"
+  ],
+  finance: [
+    "NFS",
+    "GUFL",
+    "BFC",
+    "GFCL",
+    "PFL",
+    "SIFC",
+    "CFCL",
+    "JFL",
+    "SFCL",
+    "GMFIL",
+    "ICFC",
+    "PROFL",
+    "MPFL",
+    "MFIL",
+    "RLFL"
+  ],
+  microfinance: [
+    "NUBL",
+    "CBBL",
+    "DDBL",
+    "SWBBL",
+    "NMLBBL",
+    "FMDBL",
+    "SLBBL",
+    "SKBBL",
+    "GBLBS",
+    "KMCDB",
+    "MLBBL",
+    "LLBS",
+    "HLBSL",
+    "MATRI",
+    "JSLBB",
+    "NMBMF",
+    "GILB",
+    "SWMF",
+    "MERO",
+    "NMFBS",
+    "RSDC",
+    "FOWAD",
+    "SMATA",
+    "MSLB",
+    "SMB",
+    "USLB",
+    "WNLB",
+    "NADEP",
+    "ACLBSL",
+    "SLBSL",
+    "ALBSL",
+    "GMFBS",
+    "GLBSL",
+    "SMFBS",
+    "ILBS",
+    "NICLBSL",
+    "SMPDA",
+    "MLBSL",
+    "JBLB",
+    "SAMAJ",
+    "MLBS",
+    "NESDO",
+    "ULBSL",
+    "CYCL",
+    "AVYAN",
+    "DLBS",
+    "SHLB",
+    "UNLB",
+    "ANLB"
+  ],
+  investment: ["CIT", "HIDCL", "NRN", "NIFRA", "CHDC", "ENL", "HATHY"],
+  others: ["NTC", "NRIC", "NRM", "MKCL", "NWCL", "HRL", "PURE", "TTL"]
 };
+
+export default sectorSymbols;
 
 interface TradingSignalsTableProps {
   onStockClick: (symbol: string) => void;
@@ -163,7 +278,7 @@ export const TradingSignalsTable: React.FC<TradingSignalsTableProps> = ({ onStoc
       if (activeTab === "buy" && signal.signal !== "BUY") return false;
       if (activeTab === "sell" && signal.signal !== "SELL") return false;
       if (activeTab === "hold" && signal.signal !== "HOLD") return false;
-
+      
       // Sector filtering
       if (selectedSector && sectorSymbols[selectedSector as keyof typeof sectorSymbols]) {
         return sectorSymbols[selectedSector as keyof typeof sectorSymbols].includes(signal.symbol);
@@ -188,6 +303,13 @@ export const TradingSignalsTable: React.FC<TradingSignalsTableProps> = ({ onStoc
           <option value="hydro">Hydro</option>
           <option value="hotels">Hotels</option>
           <option value="banks">Banks</option>
+          <option value="manufacturing">Manufacturings</option>
+          <option value="tradings">Tradings</option>
+          <option value="insurance">Insurance</option>
+          <option value="finance">Finance</option>
+          <option value="microfinance">Micro Finance</option>
+          <option value="investment">Investment</option>
+          <option value="others">Others</option>
         </select>
         <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
           <RiArrowDownSLine className={`w-4 h-4 ${textColor}`} />
