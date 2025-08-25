@@ -164,7 +164,7 @@ const TradeForm: React.FC<TradeFormProps> = ({ theme }) => {
   useEffect(() => {
     fetchSymbolAsync();
     handleSymbolChange("NEPSE");
-  })
+  },[])
 
   // Render input field
   const renderField = (label: string, field: keyof SymbolData, type: string = "text") => (
