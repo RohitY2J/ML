@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useTheme } from "@/context/ThemeContext";
-import { ChevronLeft, ChevronRight, Lightbulb, Users, TrendingUp, Bot, Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Users, TrendingUp, Bot, Loader2 } from "lucide-react";
 import axiosInstance from "@/lib/axios";
-import { AISignal } from "@/services/api/aiSignals";
 
 // Define the type for the symbol data
 interface SymbolData {
@@ -151,7 +150,7 @@ const TradeForm: React.FC<TradeFormProps> = ({ theme }) => {
 
       console.log(response);
       if(response.data.data){
-        let transformedData = transformData(response.data.data);
+        const transformedData = transformData(response.data.data);
         setFormData(transformedData);
       }
       else{
@@ -165,7 +164,7 @@ const TradeForm: React.FC<TradeFormProps> = ({ theme }) => {
   useEffect(() => {
     fetchSymbolAsync();
     handleSymbolChange("NEPSE");
-  },[])
+  })
 
   // Render input field
   const renderField = (label: string, field: keyof SymbolData, type: string = "text") => (
@@ -370,7 +369,7 @@ const UserManagement = () => {
 // Buy/Sell/Hold Signals Component
 const BuySellHoldEditor = () => {
   const { theme } = useTheme();
-  const [signals, setSignals] = useState([
+  const [signals] = useState([
     { id: 1, symbol: "NEPSE", signal: "BUY", confidence: 85, price: 2450 },
     { id: 2, symbol: "NABIL", signal: "HOLD", confidence: 70, price: 1200 },
     { id: 3, symbol: "NICA", signal: "SELL", confidence: 60, price: 850 },
@@ -458,7 +457,7 @@ const AISignalsEditor: React.FC = () => {
 
 // Main Admin Page Component
 export default function AdminPage() {
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [activeSection, setActiveSection] = useState("users");
 

@@ -7,7 +7,9 @@ import { CustomDatafeed } from "@/utils/CustomDatafeed";
 
 declare global {
   interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     TradingView: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     Datafeeds: any;
   }
 }
@@ -145,6 +147,7 @@ const nepseSymbols = [
 
 const Chart: React.FC = () => {
   const container = useRef<HTMLDivElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [widget, setWidget] = useState<any>(null);
   const [currentSymbol, setCurrentSymbol] = useState<string>("NEPSE");
   const [interval, setInterval] = useState<string>("1D");

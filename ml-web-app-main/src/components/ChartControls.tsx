@@ -102,10 +102,7 @@ const ChartControls: React.FC<ChartControlsProps> = ({
           return;
         }
         console.log(shapeIds);
-        shapeIds.forEach(id => {
-          //console.log(activeChart.getShapeById(id));
-          //activeChart.getShapeById(id);
-        });
+        
         // Clear existing shapes
         activeChart.removeAllShapes();
         // Get the visible range of the chart
@@ -166,7 +163,7 @@ const ChartControls: React.FC<ChartControlsProps> = ({
             const displayTop = top + buffer;
             const displayBottom = bottom - buffer;
 
-            let id = await activeChart.createMultipointShape(
+            const id = await activeChart.createMultipointShape(
               [
                 { time: startTime, price: displayTop },
                 { time: endTime, price: displayBottom },
@@ -254,6 +251,7 @@ const ChartControls: React.FC<ChartControlsProps> = ({
     showResistanceZones,
     showTrendlines,
     widget,
+    shapeIds,
     zonesData,
     trendlinesData,
     theme,
