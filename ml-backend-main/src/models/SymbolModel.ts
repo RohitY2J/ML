@@ -4,12 +4,13 @@ export interface Symbol {
   id: number;
   symbol: string;
   created_at: Date;
+  is_watched: boolean;
 }
 
 export class SymbolModel {
   static async getAllSymbols(): Promise<Symbol[]> {
     const query = `
-      SELECT id, symbol, created_at
+      SELECT id, symbol, created_at, is_watched
       FROM symbols
       ORDER BY symbol ASC
     `;
