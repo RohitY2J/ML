@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useTheme } from "@/context/ThemeContext";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import AddStockModal from "@/components/AddStockModal";
+import AddStockModal, { Stocks } from "@/components/AddStockModal";
 import axiosInstance from "@/lib/axios";
 
 interface Watchlist{
@@ -18,6 +18,7 @@ export default function WatchlistPage() {
   const { theme } = useTheme();
   const [isAddStockModalOpen, setIsAddStockModalOpen] = useState(false);
   const [watchlistData, setWatchlistData] = useState<Watchlist[]>([]);
+  const [notWatchedStocks, setNotWatchedStocks] = useState<Stocks[]>([]);
 
   const bgColor = theme === "dark" ? "bg-[#1E222D]" : "bg-[#F8FAFD]";
   const textColor = theme === "dark" ? "text-[#D1D4DC]" : "text-gray-900";
@@ -40,16 +41,13 @@ export default function WatchlistPage() {
     }
   };
 
-  const handleAddStock = (stock: string) => {
-    // const newStock = {
-    //   sn: watchlistData.length + 1,
-    //   stock,
-    //   ltp: 0,
-    //   change: 0,
-    //   signal: "HOLD", // Default signal for new stocks
-    // };
-    //setWatchlistData([...watchlistData, newStock]);
+  const handleAddStock = async (stock: string) => {
     console.log(stock);
+    const response = await axiosInstance.post(
+      `/api/signals/updateToWatchList`, {symbol: stock, toAdd: true}
+    )
+    setWatchlistData(response.data.data);
+    await fetchSymbolNotInWatchList();
   };
 
   const handleDeleteStock = async (stockToDelete: string) => {
@@ -59,10 +57,12 @@ export default function WatchlistPage() {
 
     console.log(response);
     setWatchlistData(response.data.data);
+    await fetchSymbolNotInWatchList();
   };
 
   useEffect(() => {
       fetchWatchListData();
+      fetchSymbolNotInWatchList();
     }, [])
   
   const fetchWatchListData =  async() => {
@@ -74,6 +74,14 @@ export default function WatchlistPage() {
     setWatchlistData(response.data.data);
   }
 
+  const fetchSymbolNotInWatchList = async() => {
+    const response = await axiosInstance.get(
+      `/api/symbols/getNotWatchedSymbols`
+    )
+    console.log(response.data.data);
+    setNotWatchedStocks(response.data.data);
+  }
+
   return (
     <div className={`h-full flex flex-col gap-4 p-4 ${pageBgColor}`}>
       {/* Header Section */}
@@ -83,14 +91,14 @@ export default function WatchlistPage() {
             <h1 className={`text-sm font-semibold ${textColor}`}>Watchlist</h1>
             <p className={`text-11 ${secondaryTextColor}`}>Manage your watchlist stocks</p>
           </div>
-          {/* <button
+          <button
             onClick={() => setIsAddStockModalOpen(true)}
             className={`px-4 py-2 rounded-lg text-11 font-medium ${
               theme === "dark" ? "bg-[#2962FF] hover:bg-[#1E53E5]" : "bg-blue-500 hover:bg-blue-600"
             } text-white transition-colors`}
           >
             + Add Stock
-          </button> */}
+          </button>
         </div>
       </div>
 
@@ -142,6 +150,7 @@ export default function WatchlistPage() {
         isOpen={isAddStockModalOpen}
         onClose={() => setIsAddStockModalOpen(false)}
         onAdd={handleAddStock}
+        stocks={notWatchedStocks}
       />
     </div>
   );

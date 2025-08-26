@@ -5,7 +5,7 @@ import { useTheme } from "@/context/ThemeContext";
 import { usePathname } from "next/navigation";
 import { useTradingZones } from "@/hooks/useTradingZones";
 import { useChat } from "@/hooks/useChat";
-import AddStockModal from "./AddStockModal";
+//import AddStockModal from "./AddStockModal";
 import { TradingSignalsTable } from "./TradingSignalsTable";
 import CurrentStrategySection from "./CurrentStrategySection";
 import WatchlistSection from "./WatchlistSection";
@@ -68,7 +68,7 @@ const ChartRightSection: React.FC<ChartRightSectionProps> = ({
     error: chatError,
   } = useChat();
 
-  const [isAddStockModalOpen, setIsAddStockModalOpen] = useState(false);
+  //const [isAddStockModalOpen, setIsAddStockModalOpen] = useState(false);
   const [watchlistData, setWatchlistData] = useState<Watchlist[]>([]);
 
   const textColor = theme === "dark" ? "text-[#D1D4DC]" : "text-gray-900";
@@ -368,11 +368,11 @@ const ChartRightSection: React.FC<ChartRightSectionProps> = ({
       </div>
 
       {/* Add Stock Modal */}
-      <AddStockModal
+      {/* <AddStockModal
         isOpen={isAddStockModalOpen}
         onClose={() => setIsAddStockModalOpen(false)}
         onAdd={handleAddStock}
-      />
+      /> */}
     </div>
   );
 };

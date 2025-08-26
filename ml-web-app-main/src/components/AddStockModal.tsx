@@ -4,13 +4,21 @@ import { useState } from 'react';
 import { useTheme } from '@/context/ThemeContext';
 import { RiCloseLine } from 'react-icons/ri';
 
+export interface Stocks{
+  symbol: string,
+  name: ""
+}
+
 interface AddStockModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAdd: (stock: string) => void;
+  stocks: Stocks[];
 }
 
-export default function AddStockModal({ isOpen, onClose, onAdd }: AddStockModalProps) {
+
+
+export default function AddStockModal({ isOpen, onClose, onAdd, stocks }: AddStockModalProps) {
   const { theme } = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
   
@@ -21,13 +29,13 @@ export default function AddStockModal({ isOpen, onClose, onAdd }: AddStockModalP
   const inputBgColor = theme === 'dark' ? 'bg-[#2A2E39]' : 'bg-gray-100';
 
   // Sample stock data - replace with actual API call
-  const stocks = [
-    { symbol: 'NEPSE', name: 'Nepal Stock Exchange' },
-    { symbol: 'NRIC', name: 'Nepal Reinsurance Company' },
-    { symbol: 'NBL', name: 'Nepal Bank Limited' },
-    { symbol: 'SCB', name: 'Standard Chartered Bank' },
-    { symbol: 'HBL', name: 'Himalayan Bank Limited' },
-  ];
+  // const stocks = [
+  //   { symbol: 'NEPSE', name: 'Nepal Stock Exchange' },
+  //   { symbol: 'NRIC', name: 'Nepal Reinsurance Company' },
+  //   { symbol: 'NBL', name: 'Nepal Bank Limited' },
+  //   { symbol: 'SCB', name: 'Standard Chartered Bank' },
+  //   { symbol: 'HBL', name: 'Himalayan Bank Limited' },
+  // ];
 
   const filteredStocks = stocks.filter(stock => 
     stock.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
