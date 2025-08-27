@@ -68,8 +68,8 @@ export const getAISignals = async (req: Request, res: Response) => {
 
 export const getAISignalsPerSymbolAsync = async (req: Request, res: Response) => {
     try {
-        const { symbol } = req.params;
-        const signals = await AISignalService.getAISignalsPerSymbol(symbol);
+        const { symbol, date } = req.params;
+        const signals = await AISignalService.getAISignalsPerSymbol(symbol, date);
         sendSuccess(res, signals, 'AI trading signals retrieved successfully');
         logger.info('AISignalController: Response sent successfully');
     } catch (error) {

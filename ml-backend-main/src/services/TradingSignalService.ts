@@ -17,3 +17,14 @@ export async function getTradingSignals(): Promise<TradingSignal[]> {
         throw error;
     }
 } 
+
+export async function getTradingSignal(symbol: string): Promise<TradingSignal> {
+    try {
+        logger.info('TradingSignalService: Fetching trading signals');
+        const signal = await TradingSignalModel.getTradingSignal(symbol);
+        return signal;
+    } catch (error) {
+        logger.error('Error in getTradingSignalsService:', { error });
+        throw error;
+    }
+} 

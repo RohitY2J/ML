@@ -40,4 +40,31 @@ export class TradingSignalModel {
             throw error;
         }
     }
+
+    static async getTradingSignal(symbol: string): Promise<TradingSignal> {
+        try {
+            const query = `
+                SELECT 
+                    id,
+                    symbol,
+                    ltp,
+                    signal,
+                    buy_target,
+                    sell_target,
+                    stop_loss,
+                    change_percent,
+                    created_at
+                FROM trading_signals
+                where symbol = '${symbol}'
+            `;
+            
+            logger.debug('Fetching trading signals');
+            const result = await pool.query(query);
+            logger.debug('Trading signals fetched', { count: result.rows.length });
+            return result.rows[0];
+        } catch (error) {
+            logger.error('Trading signals fetch failed', { error });
+            throw error;
+        }
+    }
 } 

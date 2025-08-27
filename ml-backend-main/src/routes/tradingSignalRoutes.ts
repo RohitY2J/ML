@@ -15,4 +15,8 @@ router.get('/getWatchList', validate(tradingSignalSchema), TradingSignalControll
 
 router.post('/updateToWatchList', validate(tradingSignalSchema), TradingSignalController.updateToWatchList);
 
+router.get('/getTradingSignal/:symbol', validate(tradingSignalSchema), TradingSignalController.getTradingSignal)
+
+router.post('/updateTradingSignal', validate(tradingSignalSchema), TradingSignalController.updateTradingSignal);
+
 export default router; 

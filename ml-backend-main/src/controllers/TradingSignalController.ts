@@ -73,3 +73,26 @@ export const updateToWatchList = async (req: Request, res: Response) => {
     }
 };
 
+export const updateTradingSignal = async (req: Request, res: Response) => {
+    try {
+        const {symbol, signal} = req.body;
+        const response = await AnalyticsSignalService.updateTradingSignal(symbol, signal);
+        sendSuccess(res, response, 'Watchlist signals saved successfully');
+    } catch (error) {
+        logger.error('TradingSignalController: Error saving watchlist signals', { error });
+        sendError(res, 'Failed to save watchlist signals', 500, error);
+    }
+};
+
+
+export const getTradingSignal = async (req: Request, res: Response) => {
+    try {
+        const {symbol} = req.params;
+        const signal = await TradingSignalService.getTradingSignal(symbol);
+        //const signal = signals.filter(s => s.symbol = symbol)[0];
+        sendSuccess(res, signal, 'Watchlist signals saved successfully');
+    } catch (error) {
+        logger.error('TradingSignalController: Error saving watchlist signals', { error });
+        sendError(res, 'Failed to save watchlist signals', 500, error);
+    }
+};

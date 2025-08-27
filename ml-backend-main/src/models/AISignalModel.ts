@@ -178,7 +178,7 @@ export class AISignalModel {
         }
     }
 
-    static async getAISignalsPerSymbol(symbol: string): Promise<AISignal | undefined> {
+    static async getAISignalsPerSymbol(symbol: string, date: string): Promise<AISignal | undefined> {
         try {
             const query = `
                 SELECT 
@@ -199,7 +199,7 @@ export class AISignalModel {
                     stop_loss,
                     trade_result
                 FROM ai_trading_signals_new
-                WHERE symbol = '${symbol}'
+                WHERE symbol = '${symbol}' and signal_date = '${date}'
                 LIMIT 1
             `;
             

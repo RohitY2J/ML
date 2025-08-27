@@ -105,3 +105,15 @@ export async function updateToWatchList(symbol: string, toAdd: boolean): Promise
         throw error;
     }
 } 
+
+
+export async function updateTradingSignal(symbol: string, signal: string): Promise<string> {
+    try {
+        const signals = await AnalyticsSignalModel.updateTradingSignal(symbol, signal);
+        return signals;
+    } catch (error) {
+        logger.error('Error in getHistoricalSignals:', { error });
+        throw error;
+    }
+} 
+

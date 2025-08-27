@@ -83,6 +83,22 @@ export class AnalyticsSignalModel {
         }
     }
 
+
+    static async updateTradingSignal(symbol: string, signal: string): Promise<string> {
+        try {
+            const query = `UPDATE trading_signals
+                        SET signal = '${signal}'
+                        WHERE symbol = '${symbol}';`;
+    
+            const result = await pool.query(query, );
+            //await AnalyticsSignalModel.getWatchListSignal();
+            return result.rows[0];
+        } catch (error) {
+            logger.error('Current year analytics signals fetch failed', { error });
+            throw error;
+        }
+    }
+
     static async getWatchListSignal(): Promise<WatchListSignal[]> {
         try {
             const query = `SELECT 
