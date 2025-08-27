@@ -38,6 +38,8 @@ const SignalTabs: React.FC<SignalTabsProps> = ({
   const historyData = data || [];
   const currentSignal = historyData[0]; // Most recent signal
 
+  console.log("Data", data);
+  console.log("History data", historyData);
   return (
     <div
       className={`rounded-lg ${bgColor} shadow-sm border ${

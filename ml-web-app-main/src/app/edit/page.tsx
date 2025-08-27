@@ -43,6 +43,8 @@ export default function EditPage() {
   const [isRightSectionCollapsed, setIsRightSectionCollapsed] = useState(true);
   const { data: combinedSignalsData, isLoading } = useCombinedSignals(currentSymbol);
 
+  console.log(combinedSignalsData);
+
   const bgColor = theme === "dark" ? "bg-dark-default" : "bg-white";
   const buttonBgColor = theme === "dark" ? "bg-[#2A2E39]" : "bg-[#EFF2F5]";
   const buttonTextColor = theme === "dark" ? "text-[#D1D4DC]" : "text-gray-500";
