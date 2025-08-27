@@ -251,7 +251,6 @@ const ChartControls: React.FC<ChartControlsProps> = ({
     showResistanceZones,
     showTrendlines,
     widget,
-    shapeIds,
     zonesData,
     trendlinesData,
     theme,
