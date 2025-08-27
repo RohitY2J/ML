@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTheme } from "@/context/ThemeContext";
-import { Users, TrendingUp, Bot } from "lucide-react";
+import { TrendingUp, Bot } from "lucide-react";
 import {
   RiMenuFoldLine,
   RiMenuUnfoldLine,
