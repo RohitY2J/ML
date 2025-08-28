@@ -2,7 +2,7 @@ import { AnalyticsSignal, AnalyticsSignalModel, WatchListSignal } from '../model
 import logger from '../utils/logger';
 
 export interface FormattedAnalyticsSignal {
-    date: Date;
+    date: string;
     Stock: string;
     Signal: string;
     'Buy Date': string;
@@ -40,7 +40,7 @@ export async function getHistoricalSignals(symbol: string): Promise<FormattedAna
         const signals = await AnalyticsSignalModel.getHistoricalSignals(symbol);
         
         const formattedSignals = signals.map(signal => ({
-            date: signal.date,
+            date: `${signal.date.getFullYear()}-${signal.date.getMonth() + 1}-${signal.date.getDate()}`,
             Stock: signal.symbol,
             Signal: signal.signal === 1 ? 'BUY' : signal.signal === -1 ? 'SELL' : 'HOLD',
             'Buy Date': '-',
