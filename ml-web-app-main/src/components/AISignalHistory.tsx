@@ -40,6 +40,11 @@ const AISignalHistory: React.FC<AISignalHistoryProps> = ({ data }) => {
             <th
               className={`px-4 py-2 text-left text-[12px] font-normal ${textColor} uppercase tracking-wider whitespace-nowrap`}
             >
+              Date
+            </th>
+            <th
+              className={`px-4 py-2 text-left text-[12px] font-normal ${textColor} uppercase tracking-wider whitespace-nowrap`}
+            >
               Stock
             </th>
             <th
@@ -126,6 +131,11 @@ const AISignalHistory: React.FC<AISignalHistoryProps> = ({ data }) => {
                 theme === "dark" ? "hover:bg-[#2A2E39]" : "hover:bg-gray-50"
               } transition-colors duration-200`}
             >
+              <td
+                className={`px-4 py-2 whitespace-nowrap text-[12px] ${textColor}`}
+              >
+                {signal.date ? signal.date : "N/A"}
+              </td>
               <td
                 className={`px-4 py-2 whitespace-nowrap text-[12px] ${textColor}`}
               >
