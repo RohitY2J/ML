@@ -161,6 +161,7 @@ export function computeMinorTrendLine(
   return { kind, t0, t1, y0, y1 };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function convertToBars(trendline: TrendLine | undefined): any[] {
   if (!trendline) return [];
   
