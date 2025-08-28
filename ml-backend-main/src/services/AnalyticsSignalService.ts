@@ -18,6 +18,19 @@ export interface FormattedAnalyticsSignal {
     'Risk-To-Reward Ratio': string;
     'Stop Loss': number | string;
     'Trade Result': string;
+    status: string;
+    direction: string;
+    entry_price: number;
+    tp_low: number;
+    tp_high: number;
+    stop_price: number;
+    opened_at: string;
+    closed_at: string | null;
+    exit_price: number | null;
+    exit_reason: string | null;
+    confidence?: number;
+    quantity?: number;
+    extras?: object;
     'Technical Indicators': {
         'SMA20': number;
         'SMA50': number;
@@ -43,19 +56,32 @@ export async function getHistoricalSignals(symbol: string): Promise<FormattedAna
             date: `${signal.date.getFullYear()}-${signal.date.getMonth() + 1}-${signal.date.getDate()}`,
             Stock: signal.symbol,
             Signal: signal.signal === 1 ? 'BUY' : signal.signal === -1 ? 'SELL' : 'HOLD',
-            'Buy Date': '-',
-            'Buy Price': signal.bb_low || '-',
-            'Adj. Buy Price': '-',
+            'Buy Date': '-',//signal.buy_date || '-',
+            'Buy Price': /*signal.entry_price ||*/ signal.bb_low || '-',
+            'Adj. Buy Price':  '-',
             Sold: '-',
-            'Sold Price': signal.bb_high || '-',
+            'Sold Price': /*signal.exit_price ||*/ signal.bb_high || '-',
             'Current Strategy': 'Active',
             'Point Change': '-',
             'Profit/Loss%': typeof signal.change_percent === 'number' ? `${signal.change_percent.toFixed(2)}%` : '0.00%',
             'Buy Range': '-',
             'Sell Range': '-',
             'Risk-To-Reward Ratio': '-',
-            'Stop Loss': signal.bb_low * 0.98 || '-',
+            'Stop Loss': signal.stop_price || signal.bb_low * 0.98 || '-',
             'Trade Result': '-',
+            status: signal.status || 'RUNNING',
+            direction: signal.direction,
+            entry_price: signal.bb_low,//signal.entry_price,
+            tp_low: signal.tp_low || 0.0,
+            tp_high: signal.tp_high || 0.0,
+            stop_price: signal.stop_price || signal.bb_low * 0.98 || 0.0,
+            opened_at: signal.opened_at ? signal.opened_at : new Date().toISOString(),
+            closed_at: signal.closed_at ? signal.closed_at : null,
+            exit_price: signal.bb_high || null,//signal.exit_price || null,
+            exit_reason: signal.exit_reason || null,
+            confidence: signal.confidence,
+            quantity: signal.quantity,
+            extras: signal.extras,
             'Technical Indicators': {
                 'SMA20': signal.sma_20,
                 'SMA50': signal.sma_50,
@@ -82,7 +108,7 @@ export async function getHistoricalSignals(symbol: string): Promise<FormattedAna
         logger.error('Error in getHistoricalSignals:', { error, symbol });
         throw error;
     }
-} 
+}
 
 
 

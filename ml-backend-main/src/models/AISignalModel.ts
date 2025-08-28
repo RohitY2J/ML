@@ -20,6 +20,26 @@ export interface AISignal {
     trade_result?: string;
 }
 
+export interface CurrentSignals {
+    id: number;
+    symbol: string;
+    date: string;
+    signal: any;
+    direction: string;
+    entry_price: number;
+    exit_price?: number;
+    exit_reason?: string;
+    extras?: object;
+    opened_at: string;
+    closed_at?: string;
+    quantity?: number;
+    status: string;
+    stop_price: number;
+    tp_high: number;
+    tp_low: number;
+    confidence?: number;
+}
+
 export class AISignalModel {
     static async getAISignals(): Promise<AISignal[]> {
         try {
@@ -77,73 +97,87 @@ export class AISignalModel {
         }
     }
 
-    static async updateAISignalsPerSymbol(updateAISignal: AISignal): Promise<AISignal | undefined> {
+    static async updateAISignalsPerSymbol(updateAISignal: CurrentSignals): Promise<CurrentSignals | undefined> {
         try {
-            // Convert buy_date to Date and format for database
-            let buyDate: Date | null = null;
-            if(updateAISignal.buy_date)
-                buyDate = new Date(updateAISignal.buy_date);
-            
-            let soldDate: Date | null = null;
-            if(updateAISignal.sold_date)
-                soldDate = new Date(updateAISignal.sold_date);
+            // Convert opened_at and closed_at to Date for database
+            let openedAt: Date | null = null;
+            if (updateAISignal.opened_at) {
+                openedAt = new Date(updateAISignal.opened_at);
+            }
+
+            let closedAt: Date | null = null;
+            if (updateAISignal.closed_at) {
+                closedAt = new Date(updateAISignal.closed_at);
+            }
+
+            let signal: number | null = null;
+            if (updateAISignal.signal === "BUY") {
+                signal = 1;
+            } else if (updateAISignal.signal === "SELL") {
+                signal = -1;
+            } else if (updateAISignal.signal === "HOLD") {
+                signal = 0;
+            } else if (typeof updateAISignal.signal === "number") {
+                signal = updateAISignal.signal;
+            }
 
             const query = `
-                UPDATE ai_trading_signals_new
+                UPDATE signal_history_analytics
                 SET
-                    symbol = $2,
-                    signal = $3,
-                    buy_date = $4,
-                    buy_price = $5,
-                    adj_buy_price = $6,
-                    sold_date = $7,
-                    sold_price = $8,
-                    current_strategy = $9,
-                    point_change = $10,
-                    profit_loss_pct = $11,
-                    buy_range = $12,
-                    sell_range = $13,
-                    risk_reward_ratio = $14,
-                    stop_loss = $15,
-                    trade_result = $16
+                    direction = $2,
+                    entry_price = $3,
+                    bb_low = $3,
+                    exit_price = $4,
+                    bb_high = $4,
+                    exit_reason = $5,
+                    extras = $6,
+                    opened_at = $7,
+                    closed_at = $8,
+                    quantity = $9,
+                    status = $10,
+                    stop_price = $11,
+                    tp_high = $12,
+                    tp_low = $13,
+                    confidence = $14,
+                    signal = $15
                 WHERE id = $1
                 RETURNING
                     id,
                     symbol,
+                    TO_CHAR(date, 'YYYY-MM-DD') AS date,
                     signal,
-                    TO_CHAR(buy_date, 'YYYY-MM-DD') AS buy_date,
-                    buy_price,
-                    adj_buy_price,
-                    TO_CHAR(sold_date, 'YYYY-MM-DD') AS sold_date,
-                    sold_price,
-                    current_strategy,
-                    point_change,
-                    profit_loss_pct,
-                    buy_range,
-                    sell_range,
-                    risk_reward_ratio,
-                    stop_loss,
-                    trade_result
+                    direction,
+                    entry_price,
+                    exit_price,
+                    exit_reason,
+                    extras,
+                    TO_CHAR(opened_at, 'YYYY-MM-DD HH24:MI:SS') AS opened_at,
+                    TO_CHAR(closed_at, 'YYYY-MM-DD HH24:MI:SS') AS closed_at,
+                    quantity,
+                    status,
+                    stop_price,
+                    tp_high,
+                    tp_low,
+                    confidence
             `;
 
             logger.debug('Updating AI signals');
             const result = await pool.query(query, [
                 updateAISignal.id,
-                updateAISignal.symbol ?? '',
-                updateAISignal.signal ?? '',
-                buyDate,
-                updateAISignal.buy_price ?? null,
-                updateAISignal.adj_buy_price ?? null,
-                soldDate,
-                updateAISignal.sold_price ?? null,
-                updateAISignal.current_strategy ?? '',
-                updateAISignal.point_change ?? null,
-                updateAISignal.profit_loss_pct ?? null,
-                updateAISignal.buy_range ?? '',
-                updateAISignal.sell_range ?? '',
-                updateAISignal.risk_reward_ratio ?? '',
-                updateAISignal.stop_loss ?? '',
-                updateAISignal.trade_result ?? '',
+                updateAISignal.direction ?? '',
+                updateAISignal.entry_price ?? null,
+                updateAISignal.exit_price ?? null,
+                updateAISignal.exit_reason ?? null,
+                updateAISignal.extras ?? null,
+                openedAt,
+                closedAt,
+                updateAISignal.quantity ?? null,
+                updateAISignal.status ?? '',
+                updateAISignal.stop_price ?? null,
+                updateAISignal.tp_high ?? null,
+                updateAISignal.tp_low ?? null,
+                updateAISignal.confidence ?? null,
+                signal
             ]);
             logger.debug('AI signals updated', { count: result.rows.length });
 
@@ -152,23 +186,24 @@ export class AISignalModel {
             }
 
             const resultData = result.rows[0];
-            const transformedData = {
+            const transformedData: CurrentSignals = {
                 id: resultData.id,
                 symbol: resultData.symbol,
-                signal: resultData.signal,
-                buy_date: resultData.buy_date ?? "",
-                buy_price: resultData.buy_price ?? "",
-                adj_buy_price: resultData.adj_buy_price ?? 0,
-                sold_date: resultData.sold_date ?? "",
-                sold_price: resultData.sold_price ?? 0,
-                current_strategy: resultData.current_strategy ?? "",
-                point_change: resultData.point_change ?? 0,
-                profit_loss_pct: resultData.profit_loss_pct ?? 0,
-                buy_range: resultData.buy_range ?? "",
-                sell_range: resultData.sell_range ?? "",
-                risk_reward_ratio: resultData.risk_reward_ratio ?? "",
-                stop_loss: resultData.stopLoss ?? "",
-                trade_result: resultData.trade_result ?? ""
+                date: resultData.date ?? '',
+                signal: resultData.signal ?? null,
+                direction: resultData.direction ?? '',
+                entry_price: resultData.entry_price ?? null,
+                exit_price: resultData.exit_price ?? null,
+                exit_reason: resultData.exit_reason ?? null,
+                extras: resultData.extras ?? null,
+                opened_at: resultData.opened_at ?? null,
+                closed_at: resultData.closed_at ?? null,
+                quantity: resultData.quantity ?? null,
+                status: resultData.status ?? '',
+                stop_price: resultData.stop_price ?? null,
+                tp_high: resultData.tp_high ?? null,
+                tp_low: resultData.tp_low ?? null,
+                confidence: resultData.confidence ?? null,
             };
 
             return transformedData;
@@ -178,30 +213,33 @@ export class AISignalModel {
         }
     }
 
-    static async getAISignalsPerSymbol(symbol: string, date: string): Promise<AISignal | undefined> {
+    static async getAISignalsPerSymbol(symbol: string, date: string): Promise<CurrentSignals | undefined> {
         try {
             const query = `
-                SELECT 
-                    id,
-                    symbol,
-                    signal,
-                    TO_CHAR(buy_date, 'YYYY-MM-DD') AS buy_date,
-                    buy_price,
-                    adj_buy_price,
-                    TO_CHAR(sold_date, 'YYYY-MM-DD') AS sold_date,
-                    sold_price,
-                    current_strategy,
-                    point_change,
-                    profit_loss_pct,
-                    buy_range,
-                    sell_range,
-                    risk_reward_ratio,
-                    stop_loss,
-                    trade_result
-                FROM ai_trading_signals_new
-                WHERE symbol = '${symbol}' and signal_date = '${date}'
-                LIMIT 1
-            `;
+                    SELECT 
+                        id,
+                        symbol,
+                        signal,
+                        TO_CHAR(date, 'YYYY-MM-DD') AS date,
+                        direction,
+                        bb_low as entry_price,
+                        bb_high as exit_price,
+                        exit_reason,
+                        extras,
+                        opened_at,
+                        closed_at,
+                        quantity,
+                        status,
+                        stop_price,
+                        tp_high,
+                        tp_low,
+                        confidence
+                    FROM signal_history_analytics
+                    WHERE symbol = '${symbol}' 
+                    order by date desc
+                    LIMIT 1;
+                `;
+
             
             logger.debug('Fetching AI signals');
             const result = await pool.query(query);
@@ -212,25 +250,25 @@ export class AISignalModel {
             }
 
             const resultData = result.rows[0];
-            const transformedData = {
-                id: resultData.id,
-                symbol: resultData.symbol,
-                signal: resultData.signal,
-                buy_date: resultData.buy_date ?? "",
-                buy_price: resultData.buy_price ?? "",
-                adj_buy_price: resultData.adj_buy_price ?? 0,
-                sold_date: resultData.sold_date ?? "",
-                sold_price: resultData.sold_price ?? 0,
-                current_strategy: resultData.current_strategy ?? "",
-                point_change: resultData.point_change ?? 0,
-                profit_loss_pct: resultData.profit_loss_pct ?? 0,
-                buy_range: resultData.buy_range ?? "",
-                sell_range: resultData.sell_range ?? "",
-                risk_reward_ratio: resultData.risk_reward_ratio ?? "",
-                stop_loss: resultData.stopLoss ?? "",
-                trade_result: resultData.trade_result ?? ""
-            }
-            return transformedData;
+            // const transformedData = {
+            //     id: resultData.id,
+            //     symbol: resultData.symbol,
+            //     signal: resultData.signal,
+            //     buy_date: resultData.buy_date ?? "",
+            //     buy_price: resultData.buy_price ?? "",
+            //     adj_buy_price: resultData.adj_buy_price ?? 0,
+            //     sold_date: resultData.sold_date ?? "",
+            //     sold_price: resultData.sold_price ?? 0,
+            //     current_strategy: resultData.current_strategy ?? "",
+            //     point_change: resultData.point_change ?? 0,
+            //     profit_loss_pct: resultData.profit_loss_pct ?? 0,
+            //     buy_range: resultData.buy_range ?? "",
+            //     sell_range: resultData.sell_range ?? "",
+            //     risk_reward_ratio: resultData.risk_reward_ratio ?? "",
+            //     stop_loss: resultData.stopLoss ?? "",
+            //     trade_result: resultData.trade_result ?? ""
+            // }
+            return resultData;
         } catch (error) {
             logger.error('AI signals fetch failed', { error });
             throw error;

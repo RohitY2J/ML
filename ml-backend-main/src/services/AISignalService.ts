@@ -1,4 +1,4 @@
-import { AISignal, AISignalModel } from '../models/AISignalModel';
+import { AISignal, AISignalModel, CurrentSignals } from '../models/AISignalModel';
 import logger from '../utils/logger';
 
 export async function getAISignals(): Promise<AISignal[]> {
@@ -37,7 +37,7 @@ export async function getAISignals(): Promise<AISignal[]> {
     }
 } 
 
-export async function updateAISignal(updatedAISignal: AISignal): Promise<AISignal | undefined>{
+export async function updateAISignal(updatedAISignal: CurrentSignals): Promise<CurrentSignals | undefined>{
     try {
         const signals = await AISignalModel.updateAISignalsPerSymbol(updatedAISignal);
         return signals;
@@ -47,7 +47,7 @@ export async function updateAISignal(updatedAISignal: AISignal): Promise<AISigna
     }
 }
 
-export async function getAISignalsPerSymbol(symbol: string, date: string): Promise<AISignal | undefined> {
+export async function getAISignalsPerSymbol(symbol: string, date: string): Promise<CurrentSignals | undefined> {
     try {
         const signals = await AISignalModel.getAISignalsPerSymbol(symbol, date);
         return signals;

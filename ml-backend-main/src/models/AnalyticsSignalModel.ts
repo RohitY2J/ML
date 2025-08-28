@@ -20,6 +20,19 @@ export interface AnalyticsSignal {
     bb_mid: number;
     vwap: number;
     created_at: Date;
+    status: string;
+    direction: string;
+    entry_price: number;
+    tp_low: number;
+    tp_high: number;
+    stop_price: number;
+    opened_at: string;
+    closed_at: string | null;
+    exit_price: number | null;
+    exit_reason: string | null;
+    confidence?: number;
+    quantity?: number;
+    extras?: object;
 }
 
 export interface WatchListSignal{
