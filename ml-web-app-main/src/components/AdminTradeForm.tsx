@@ -11,29 +11,51 @@ interface TradeFormProps {
   selectedDate?: string;
 }
 
-interface SymbolSchema{
+interface SymbolSchema {
   id: number;
   symbol: string;
 }
 
-// Define the type for the symbol data
+// Define the type for the symbol data (API response and form data)
 interface SymbolData {
   id?: number;
-  adj_buy_price?: string;
-  buy_date: string;
-  buy_price: string;
-  buy_range?: string;
-  current_strategy: string;
-  point_change: string;
-  profit_loss_pct: string;
-  risk_reward_ratio: string;
-  sell_range: string;
-  signal: string;
-  sold_date?: string;
-  sold_price?: string;
   symbol?: string;
-  stop_loss: string;
-  trade_result?: string;
+  date?: string;
+  signal?: any;
+  direction?: string;
+  entry_price?: number | null;
+  exit_price?: number | null;
+  exit_reason?: string | null;
+  extras?: string | null;
+  opened_at?: string | null;
+  closed_at?: string | null;
+  quantity?: number | null;
+  status?: string;
+  stop_price?: number | null;
+  tp_high?: number | null;
+  tp_low?: number | null;
+  confidence?: number | null;
+}
+
+// Define the type for the API response, where signal is a number
+interface ApiSymbolData {
+  id?: number;
+  symbol?: string;
+  date?: string;
+  signal?: number;
+  direction?: string;
+  entry_price?: number | null;
+  exit_price?: number | null;
+  exit_reason?: string | null;
+  extras?: string | null;
+  opened_at?: string | null;
+  closed_at?: string | null;
+  quantity?: number | null;
+  status?: string;
+  stop_price?: number | null;
+  tp_high?: number | null;
+  tp_low?: number | null;
+  confidence?: number | null;
 }
 
 // TradeForm Component
@@ -56,106 +78,103 @@ export const TradeForm: React.FC<TradeFormProps> = ({ theme }) => {
   const textColor = theme === "dark" ? "text-gray-300" : "text-gray-700";
   const borderColor = theme === "dark" ? "border-[#2A2E39]" : "border-gray-200";
   const inputBgColor = theme === "dark" ? "bg-dark-light" : "bg-gray-50";
- // const hoverBgColor = theme === "dark" ? "hover:bg-dark-light" : "hover:bg-gray-100";
   const cardBg = theme === "dark" ? "bg-dark-light" : "bg-gray-50";
 
-  const transformData = (responseData: SymbolData):SymbolData => {
-    const transformedData = {
-          id: responseData.id ? responseData.id : undefined,
-          adj_buy_price: responseData.adj_buy_price ?? undefined,
-          buy_date: responseData.buy_date ?? undefined,
-          buy_price: responseData.buy_price ?? undefined,
-          buy_range: responseData.buy_range ?? undefined,
-          current_strategy: responseData.current_strategy,
-          point_change: responseData.point_change,
-          profit_loss_pct: responseData.profit_loss_pct,
-          risk_reward_ratio: responseData.risk_reward_ratio,
-          sell_range: responseData.sell_range,
-          signal: responseData.signal,
-          sold_date: responseData.sold_date ?? undefined,
-          sold_price: responseData.sold_price ?? undefined,
-          symbol: responseData.symbol ?? undefined,
-          stop_loss: responseData.stop_loss ?? undefined,
-          trade_result: responseData.trade_result ?? undefined,
-      };
-    return transformedData;
-  }
+  const transformData = (responseData: ApiSymbolData): SymbolData => {
+    return {
+      id: responseData.id ?? undefined,
+      symbol: responseData.symbol ?? undefined,
+      date: responseData.date ?? undefined,
+      signal: responseData.signal === 1 ? "BUY" : responseData.signal === -1 ? "SELL" : responseData.signal === 0 ? "HOLD" : undefined,
+      direction: responseData.direction ?? undefined,
+      entry_price: responseData.entry_price ?? undefined,
+      exit_price: responseData.exit_price ?? undefined,
+      exit_reason: responseData.exit_reason ?? undefined,
+      extras: responseData.extras ?? undefined,
+      opened_at: responseData.opened_at ?  new Date(responseData.opened_at).toISOString().split("T")[0]: undefined,
+      closed_at: responseData.closed_at ? new Date(responseData.closed_at).toISOString().split("T")[0] : undefined,
+      quantity: responseData.quantity ?? undefined,
+      status: responseData.status ?? undefined,
+      stop_price: responseData.stop_price ?? undefined,
+      tp_high: responseData.tp_high ?? undefined,
+      tp_low: responseData.tp_low ?? undefined,
+      confidence: responseData.confidence ?? undefined,
+    };
+  };
 
   // Handle symbol change
   const handleSymbolChange = async (symbol: string) => {
-    //setIsLoading(true);
-    console.log("Handle symbole change", symbol);
+    setIsLoading(true);
+    console.log("Handle symbol change", symbol);
     setSelectedSymbol(symbol);
 
-    const response = await axiosInstance.get(`/api/ai-signals/${symbol}/${selectedDate}`);
+    const date = selectedDate || getTodaysDate();
+    const response = await axiosInstance.get(`/api/ai-signals/${symbol}/${date}`);
     console.log(response.data.data);
-    const responseData = response.data.data;
-    if(responseData){
+    const responseData: ApiSymbolData = response.data.data;
+    if (responseData) {
       const transformedData = transformData(responseData);
-      console.log(transformedData)
+      console.log(transformedData);
       setFormData(transformedData);
-    }
-    else{
+    } else {
       setFormData(null);
     }
     setEditMode(false);
     setIsLoading(false);
   };
 
-  // Fetch symbol
+  // Fetch symbols
   const fetchSymbolAsync = async () => {
-    const response = await axiosInstance.get(
-        `/api/symbols`
-      );
-
+    const response = await axiosInstance.get(`/api/symbols`);
     console.log(response);
     setSymbols(response.data.data);
-  }
+  };
 
-  // Handle input change
-  const handleInputChange = async (field: keyof SymbolData, value: string) => {
+  // Handle input change for text, number, and select fields
+  const handleInputChange = (field: keyof SymbolData, value: string | number | null) => {
     setFormData((prev) => {
-      // If prev is null, initialize with default SymbolData
       const defaultData: SymbolData = {
         id: undefined,
         symbol: selectedSymbol || undefined,
-        signal: "",
-        buy_date: "",
-        buy_price: "",
-        adj_buy_price: undefined,
-        sold_date: undefined,
-        sold_price: undefined,
-        current_strategy: "",
-        point_change: "",
-        profit_loss_pct: "",
-        buy_range: undefined,
-        sell_range: "",
-        risk_reward_ratio: "",
-        stop_loss: "",
-        trade_result: undefined,
+        date: selectedDate || undefined,
+        signal: undefined,
+        direction: undefined,
+        entry_price: null,
+        exit_price: null,
+        exit_reason: null,
+        extras: null,
+        opened_at: null,
+        closed_at: null,
+        quantity: null,
+        status: undefined,
+        stop_price: null,
+        tp_high: null,
+        tp_low: null,
+        confidence: null,
       };
       return {
         ...(prev || defaultData),
-        [field]: value, // Convert empty string to undefined
+        [field]: value === "" ? null : value,
       };
     });
   };
 
   // Handle form submission
   const handleSubmit = async () => {
-    //setIsLoading(true);
-    if (selectedSymbol) {
+    setIsLoading(true);
+    if (selectedSymbol && formData) {
+      // Convert signal back to numeric for API
+      // const submitData:ApiSymbolData = {
+      //   ...formData,
+      //   signal: formData.signal === "BUY" ? 1 : formData.signal === "SELL" ? -1 : formData.signal === "HOLD" ? 0 : undefined,
+      // };
       console.log("Updated data for", selectedSymbol, formData);
-      const response = await axiosInstance.post(
-        `/api/ai-signals/updateAISignal`, formData
-      );
-
+      const response = await axiosInstance.post(`/api/ai-signals/updateAISignal`, formData);
       console.log(response);
-      if(response.data.data){
+      if (response.data.data) {
         const transformedData = transformData(response.data.data);
         setFormData(transformedData);
-      }
-      else{
+      } else {
         setFormData(null);
       }
       setEditMode(false);
@@ -172,18 +191,17 @@ export const TradeForm: React.FC<TradeFormProps> = ({ theme }) => {
   const getTodaysDate = () => {
     const today = new Date();
     const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
 
   useEffect(() => {
-    // Set today's date on component mount
     const date = getTodaysDate();
     setSelectedDate(date);
     fetchSymbolAsync();
-    //handleSymbolChange("NEPSE");
-  },[])
+    handleSymbolChange('NEPSE');
+  }, []);
 
   interface LoaderOverlayProps {
     isVisible: boolean;
@@ -192,11 +210,11 @@ export const TradeForm: React.FC<TradeFormProps> = ({ theme }) => {
 
   const LoaderOverlay: React.FC<LoaderOverlayProps> = ({ isVisible, theme }) => {
     if (!isVisible) return null;
-  
+
     const overlayBg = theme === "dark" ? "bg-black bg-opacity-50" : "bg-white bg-opacity-50";
     const loaderBg = theme === "dark" ? "bg-dark-default" : "bg-white";
     const loaderTextColor = theme === "dark" ? "text-gray-300" : "text-gray-700";
-  
+
     return (
       <div className={`fixed inset-0 z-50 flex items-center justify-center ${overlayBg}`}>
         <div className={`${loaderBg} p-6 rounded-lg shadow-lg flex flex-col items-center gap-3`}>
@@ -206,9 +224,14 @@ export const TradeForm: React.FC<TradeFormProps> = ({ theme }) => {
       </div>
     );
   };
-  
+
   // Render input field
-  const renderField = (label: string, field: keyof SymbolData, type: string = "text") => (
+  const renderField = (
+    label: string,
+    field: keyof SymbolData,
+    type: string = "text",
+    options?: string[]
+  ) => (
     <div className="mb-4">
       <LoaderOverlay isVisible={isLoading} theme={theme} />
       {formData && Object.keys(formData).length > 0 ? (
@@ -216,18 +239,35 @@ export const TradeForm: React.FC<TradeFormProps> = ({ theme }) => {
           <label className={`block text-sm font-medium mb-2 ${textColor}`}>
             {label.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}
           </label>
-          <input
-            type={type}
-            value={formData[field] || ""}
-            onChange={(e) => handleInputChange(field, e.target.value)}
-            disabled={!editMode}
-            className={`w-full p-3 rounded-lg border ${borderColor} ${inputBgColor} ${textColor} text-sm
-              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
-              ${!editMode ? "opacity-60 cursor-not-allowed" : ""}`}
-          />
+          {options ? (
+            <select
+              value={formData[field] || ""}
+              onChange={(e) => handleInputChange(field, e.target.value || null)}
+              disabled={!editMode}
+              className={`w-full p-3 rounded-lg border ${borderColor} ${inputBgColor} ${textColor} text-sm
+                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                ${!editMode ? "opacity-60 cursor-not-allowed" : ""}`}
+            >
+              <option value="">-- Select --</option>
+              {options.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <input
+              type={type}
+              value={formData[field] ?? ""}
+              onChange={(e) => handleInputChange(field, type === "number" ? (isNaN(parseFloat(e.target.value)) ? null : parseFloat(e.target.value)) : e.target.value || null)}
+              disabled={!editMode}
+              className={`w-full p-3 rounded-lg border ${borderColor} ${inputBgColor} ${textColor} text-sm
+                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                ${!editMode ? "opacity-60 cursor-not-allowed" : ""}`}
+            />
+          )}
         </>
-      ) : ""
-    }
+      ) : ""}
     </div>
   );
 
@@ -249,7 +289,7 @@ export const TradeForm: React.FC<TradeFormProps> = ({ theme }) => {
             <h3 className={`text-lg font-semibold mb-4 ${textColor}`}>Select Symbol</h3>
             <select
               value={selectedSymbol}
-              onChange={(e) => setSelectedSymbol(e.target.value)}
+              onChange={(e) => handleSymbolChange(e.target.value)}
               className={`w-full p-3 rounded-lg border ${borderColor} ${inputBgColor} ${textColor} text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
             >
               <option value="">-- Select a Symbol --</option>
@@ -284,15 +324,15 @@ export const TradeForm: React.FC<TradeFormProps> = ({ theme }) => {
               disabled={!selectedSymbol}
               className={`w-32 p-3 rounded-lg text-sm font-medium transition-colors duration-200
                 ${!selectedSymbol 
-                  ? 'bg-gray-400 text-gray-600 cursor-not-allowed' 
-                  : 'bg-blue-600 hover:bg-blue-700 text-white'
+                  ? "bg-gray-400 text-gray-600 cursor-not-allowed" 
+                  : "bg-blue-600 hover:bg-blue-700 text-white"
                 }`}
             >
               Apply Filters
             </button>
           </div>
         </div>
-    </div>
+      </div>
 
       {/* Signal Details */}
       {selectedSymbol && (
@@ -302,59 +342,61 @@ export const TradeForm: React.FC<TradeFormProps> = ({ theme }) => {
               Signal Details - {selectedSymbol}
             </h3>
             {formData && Object.keys(formData).length > 0 ? (
-            <div className="flex gap-2">
-              {!editMode ? (
-                <button
-                  onClick={() => setEditMode(true)}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-                >
-                  Edit
-                </button>
-              ) : (
-                <div className="flex gap-2">
+              <div className="flex gap-2">
+                {!editMode ? (
                   <button
-                    onClick={handleSubmit}
-                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+                    onClick={() => setEditMode(true)}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
                   >
-                    Submit
+                    Edit
                   </button>
-                  <button
-                    onClick={() => {
-                      setEditMode(false);
-                      if (symbolData[selectedSymbol]) {
-                        setFormData(symbolData[selectedSymbol]);
-                      }
-                    }}
-                    className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm font-medium"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              )}
-            </div>) : ""}
-          </div>
-          {formData && Object.keys(formData).length > 0 ?
-          (<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {renderField("Signal", "signal")}
-            {renderField("Buy Date", "buy_date", "date")}
-            {renderField("Buy Price", "buy_price", "number")}
-            {renderField("Adjusted Buy Price", "adj_buy_price", "number")}
-            {renderField("Sold Date", "sold_date", "date")}
-            {renderField("Sold Price", "sold_price", "number")}
-            {renderField("Current Strategy", "current_strategy")}
-            {renderField("Point Change", "point_change", "number")}
-            {renderField("Profit/Loss %", "profit_loss_pct", "number")}
-            {renderField("Buy Range", "buy_range")}
-            {renderField("Sell Range", "sell_range")}
-            {renderField("Risk Reward Ratio", "risk_reward_ratio")}
-            {renderField("Stop Loss", "stop_loss")}
-            {renderField("Trade Result", "trade_result")}
-          </div>) : (
-              <div className={`text-center py-8 ${textColor}`}>
-                <p className="text-lg font-medium">No AI Signal</p>
-                <p className="text-sm opacity-70 mt-2">No signal data available for this symbol</p>
+                ) : (
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleSubmit}
+                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+                    >
+                      Submit
+                    </button>
+                    <button
+                      onClick={() => {
+                        setEditMode(false);
+                        if (symbolData[selectedSymbol]) {
+                          setFormData(symbolData[selectedSymbol]);
+                        }
+                      }}
+                      className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm font-medium"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                )}
               </div>
-            )}
+            ) : ""}
+          </div>
+          {formData && Object.keys(formData).length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {renderField("Signal", "signal", "select", ["HOLD", "SELL", "BUY"])}
+              {renderField("Direction", "direction", "select", ["LONG", "SHORT"])}
+              {renderField("Status", "status", "select", ["RUNNING", "SUCCESS", "STOP_LOSS", "CANCELLED"])}
+              {renderField("Entry Price", "entry_price", "number")}
+              {renderField("Exit Price", "exit_price", "number")}
+              {renderField("Exit Reason", "exit_reason")}
+              {renderField("Extras", "extras")}
+              {renderField("Opened At", "opened_at", "date")}
+              {renderField("Closed At", "closed_at", "date")}
+              {renderField("Quantity", "quantity", "number")}
+              {renderField("Stop Price", "stop_price", "number")}
+              {renderField("Take Profit High", "tp_high", "number")}
+              {renderField("Take Profit Low", "tp_low", "number")}
+              {renderField("Confidence", "confidence", "number")}
+            </div>
+          ) : (
+            <div className={`text-center py-8 ${textColor}`}>
+              <p className="text-lg font-medium">No AI Signal</p>
+              <p className="text-sm opacity-70 mt-2">No signal data available for this symbol</p>
+            </div>
+          )}
         </div>
       )}
     </div>

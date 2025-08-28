@@ -167,7 +167,7 @@ const ChartControls: React.FC<ChartControlsProps> = ({
                   backgroundColor:
                     theme === "dark"
                       ? "rgba(34, 197, 94, 0.1)"
-                      : "rgba(34, 197, 94, 0.08)",
+                      : "rgba(34, 197, 94, 0.3)",
                   borderColor:
                     theme === "dark"
                       ? "rgb(74, 222, 128)"

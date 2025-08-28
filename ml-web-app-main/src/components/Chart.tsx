@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";
 import { CustomDatafeed } from "@/utils/CustomDatafeed";
+import axiosInstance from "@/lib/axios";
 
 declare global {
   interface Window {
@@ -14,146 +15,22 @@ declare global {
   }
 }
 
-// NEPSE symbols 
-const nepseSymbols = [
-    "NHPC",
-    "BPCL",
-    "CHCL",
-    "AHPC",
-    "SHPC",
-    "RIDI",
-    "BARUN",
-    "API",
-    "NGPL",
-    "KKHC",
-    "DHPL",
-    "AKPL",
-    "SPDL",
-    "UMHL",
-    "CHL",
-    "HPPL",
-    "NHDL",
-    "RADHI",
-    "PMHPL",
-    "KPCL",
-    "AKJCL",
-    "JOSHI",
-    "UPPER",
-    "GHL",
-    "UPCL",
-    "MHNL",
-    "PPCL",
-    "HURJA",
-    "UNHPL",
-    "RHPL",
-    "SJCL",
-    "HDHPC",
-    "LEC",
-    "SSHL",
-    "MEN",
-    "UMRH",
-    "GLH",
-    "SHEL",
-    "RURU",
-    "MKJC",
-    "SAHAS",
-    "TPC",
-    "SPC",
-    "NYADI",
-    "MBJC",
-    "BNHC",
-    "GVL",
-    "BHL",
-    "RFPL",
-    "DORDI",
-    "BHDC",
-    "HHL",
-    "UHEWA",
-    "SGHC",
-    "MHL",
-    "USHEC",
-    "RHGCL",
-    "SPHL",
-    "PPL",
-    "SIKLES",
-    "EHPL",
-    "PHCL",
-    "BHPL",
-    "SMHL",
-    "SPL",
-    "SMH",
-    "MKHC",
-    "AHL",
-    "TAMOR",
-    "MHCL",
-    "SMJC",
-    "MAKAR",
-    "MKHL",
-    "DOLTI",
-    "BEDC",
-    "MCHL",
-    "IHL",
-    "MEL",
-    "RAWA",
-    "USHL",
-    "TSHL",
-    "KBSH",
-    "MEHL",
-    "ULHC",
-    "MANDU",
-    "BGWT",
-    "MSHL",
-    "MMKJL",
-    "TVCL",
-    "VLUCL",
-    "CKHL",
-    "SANVI",
-    "SHL", "TRH", "OHL", "CGH", "KDL", "CITY",
-    "NABIL",
-    "NIMB",
-    "SCB",
-    "HBL",
-    "SBI",
-    "EBL",
-    "NICA",
-    "MBL",
-    "LSL",
-    "KBL",
-    "SBL",
-    "SANIMA",
-    "NMB",
-    "PRVU",
-    "GBIME",
-    "CZBIL",
-    "PCBL",
-    "ADBL",
-    "NBL",
-    "NABBC",
-    "EDBL",
-    "LBBL",
-    "MDB",
-    "MLBL",
-    "GBBL",
-    "JBBL",
-    "CORBL",
-    "KSBBL",
-    "SADBL",
-    "SHINE",
-    "MNBBL",
-    "SINDU",
-    "GRDBL",
-    "SAPDBL",
-  ];
+interface SymbolSchema {
+  id: number;
+  symbol: string;
+}
 
 const Chart: React.FC = () => {
   const container = useRef<HTMLDivElement>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [widget, setWidget] = useState<any>(null);
+  const [nepseSymbols, setNepseSymbols] = useState<string[]>([]);
   const [currentSymbol, setCurrentSymbol] = useState<string>("NEPSE");
   const [interval, setInterval] = useState<string>("1D");
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [filteredSymbols, setFilteredSymbols] = useState<string[]>(nepseSymbols);
+  const [filteredSymbols, setFilteredSymbols] = useState<string[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  //const [symbols, setSymbols] = useState<SymbolSchema[]>([]);
+
   const router = useRouter();
   const { theme } = useTheme();
 
@@ -243,7 +120,7 @@ const Chart: React.FC = () => {
             "paneProperties.gridProperties.horzLinesVisible": false,
             "scalesProperties.lineColor": theme === "dark" ? "#2a2e39" : "#e0e3eb",
             "scalesProperties.textColor": theme === "dark" ? "#d1d4dc" : "#131722",
-            "mainSeriesProperties.style": 1, // 1 is for candles
+            "mainSeriesProperties.style": 1,
             "mainSeriesProperties.candleStyle.upColor": "#26a69a",
             "mainSeriesProperties.candleStyle.downColor": "#ef5350",
             "mainSeriesProperties.candleStyle.borderUpColor": "#26a69a",
@@ -289,6 +166,21 @@ const Chart: React.FC = () => {
       });
     };
   }, [interval, theme, currentSymbol]);
+
+  const fetchSymbols = async () => {
+    try {
+      const response = await axiosInstance.get("/api/symbols");
+      const symbolsData: SymbolSchema[] = response.data.data;
+      //setSymbols(symbolsData);
+      setNepseSymbols(symbolsData.map((item) => item.symbol.toUpperCase()));
+    } catch (error) {
+      console.error("Error fetching symbols:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchSymbols();
+  }, []);
 
   const handleIntervalChange = (newInterval: string) => {
     setInterval(newInterval);

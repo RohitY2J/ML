@@ -214,7 +214,7 @@ export default function EditPage() {
       <div className="flex h-full">
         <div
           className={`transition-all duration-300 ${
-            isRightSectionCollapsed ? "w-[96%]" : "w-[83%]"
+            isRightSectionCollapsed ? "w-[93%]" : "w-[77%]"
           }`}
         >
           <div
@@ -245,7 +245,7 @@ export default function EditPage() {
 
         <div
           className={`transition-all duration-300 ${
-            isRightSectionCollapsed ? "w-[4%]" : "w-[17%]"
+            isRightSectionCollapsed ? "w-[7%]" : "w-[23%]"
           }`}
         >
           <ChartRightSection
