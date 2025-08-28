@@ -21,6 +21,7 @@ interface SymbolData {
   id?: number;
   symbol?: string;
   date?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   signal?: any;
   direction?: string;
   entry_price?: number | null;

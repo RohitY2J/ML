@@ -22,6 +22,7 @@ interface SymbolSchema {
 
 const Chart: React.FC = () => {
   const container = useRef<HTMLDivElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [widget, setWidget] = useState<any>(null);
   const [nepseSymbols, setNepseSymbols] = useState<string[]>([]);
   const [currentSymbol, setCurrentSymbol] = useState<string>("NEPSE");
