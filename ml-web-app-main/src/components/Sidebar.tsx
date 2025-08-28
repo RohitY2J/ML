@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";
@@ -102,6 +102,19 @@ export default function Sidebar({ onCollapseChange, onPathChange, selectedPath }
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
 
+  // Detect mobile screen size and set collapsed state
+  useEffect(() => {
+    const checkMobile = () => {
+      const isMobile = window.innerWidth < 768; // Tailwind's 'md' breakpoint
+      setIsCollapsed(isMobile);
+      onCollapseChange(isMobile);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, [onCollapseChange]);
+
   const bgColor = theme === "dark" ? "bg-dark-default" : "bg-white";
   const textColor = theme === "dark" ? "text-gray-300" : "text-gray-700";
   const hoverBgColor = theme === "dark" ? "hover:bg-dark-light" : "hover:bg-gray-100";
@@ -122,7 +135,7 @@ export default function Sidebar({ onCollapseChange, onPathChange, selectedPath }
     <div
       className={`${bgColor} h-screen ${
         isCollapsed ? "w-20" : "w-60"
-      } transition-all duration-300 border-r ${borderColor} flex flex-col`}
+      } transition-all duration-300 border-r ${borderColor} flex flex-col sm:${isCollapsed ? "w-20" : "w-60"}`}
     >
       {/* Logo Section */}
       <div className={`p-4 border-b ${borderColor}`}>
@@ -183,7 +196,7 @@ export default function Sidebar({ onCollapseChange, onPathChange, selectedPath }
       </div>
 
       {/* Collapse Button at Bottom */}
-      <div className={`p-4 border-t ${borderColor}`}>
+      <div className={`p-4 border-t ${borderColor} hidden md:block`}>
         <button
           onClick={handleCollapse}
           className={`w-full flex items-center justify-center p-2 rounded-lg ${hoverBgColor} ${textColor}`}

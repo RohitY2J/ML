@@ -6,6 +6,6 @@ import { trendlineSchema } from '../validations/schemas';
 const router = Router();
 
 // Get trendlines for a symbol and timeframe
-router.get('/:symbol', validate(trendlineSchema), TrendlineController.getTrendlines);
+router.get('/:symbol', TrendlineController.getTrendlines);
 
 export default router; 
