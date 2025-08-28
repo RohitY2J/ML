@@ -40,6 +40,7 @@ const SignalTabs: React.FC<SignalTabsProps> = ({
 
   console.log("Data", data);
   console.log("History data", historyData);
+  console.log("Current Signal", currentSignal);
   return (
     <div
       className={`rounded-lg ${bgColor} shadow-sm border ${
@@ -144,6 +145,11 @@ const SignalTabs: React.FC<SignalTabsProps> = ({
                   <th
                     className={`px-4 py-2 text-left text-[12px] font-normal ${textColor} uppercase tracking-wider whitespace-nowrap`}
                   >
+                    Date
+                  </th>
+                  <th
+                    className={`px-4 py-2 text-left text-[12px] font-normal ${textColor} uppercase tracking-wider whitespace-nowrap`}
+                  >
                     Stock
                   </th>
                   <th
@@ -234,6 +240,11 @@ const SignalTabs: React.FC<SignalTabsProps> = ({
                     <td
                       className={`px-4 py-2 whitespace-nowrap text-[12px] ${textColor}`}
                     >
+                      {currentSignal.date ? currentSignal.date : "N/A"}
+                    </td>
+                    <td
+                      className={`px-4 py-2 whitespace-nowrap text-[12px] ${textColor}`}
+                    >
                       {currentSignal.Stock || "N/A"}
                     </td>
                     <td
@@ -254,17 +265,17 @@ const SignalTabs: React.FC<SignalTabsProps> = ({
                     <td
                       className={`px-4 py-2 whitespace-nowrap text-[12px] ${textColor}`}
                     >
-                      {currentSignal.Buy_Date || "N/A"}
+                      {currentSignal["Buy Data"] ? new Date(currentSignal["Buy Data"]).toISOString().split('T')[0] : "N/A"}
                     </td>
                     <td
                       className={`px-4 py-2 whitespace-nowrap text-[12px] ${textColor}`}
                     >
-                      {currentSignal.Buy_Price || "N/A"}
+                      {currentSignal["Buy Price"] || "N/A"}
                     </td>
                     <td
                       className={`px-4 py-2 whitespace-nowrap text-[12px] ${textColor}`}
                     >
-                      {currentSignal.Adj_Buy_Price || "N/A"}
+                      {currentSignal["Adj. Buy Price"] || "N/A"}
                     </td>
                     <td
                       className={`px-4 py-2 whitespace-nowrap text-[12px] ${textColor}`}
@@ -274,42 +285,42 @@ const SignalTabs: React.FC<SignalTabsProps> = ({
                     <td
                       className={`px-4 py-2 whitespace-nowrap text-[12px] ${textColor}`}
                     >
-                      {currentSignal.Sold_Price || "N/A"}
+                      {currentSignal["Sold Price"] || "N/A"}
                     </td>
                     <td
                       className={`px-4 py-2 whitespace-nowrap text-[12px] ${textColor}`}
                     >
-                      {currentSignal.Current_Strategy || "N/A"}
+                      {currentSignal["Current Strategy"] || "N/A"}
                     </td>
                     <td
                       className={`px-4 py-2 whitespace-nowrap text-[12px] ${textColor}`}
                     >
-                      {currentSignal.Point_Change || "N/A"}
+                      {currentSignal["Point Change"] || "N/A"}
                     </td>
                     <td
                       className={`px-4 py-2 whitespace-nowrap text-[12px] ${textColor}`}
                     >
-                      {currentSignal.Profit_Loss || "N/A"}
+                      {currentSignal["Profit/Loss%"] || "N/A"}
                     </td>
                     <td
                       className={`px-4 py-2 whitespace-nowrap text-[12px] ${textColor}`}
                     >
-                      {currentSignal.Buy_Range || "N/A"}
+                      {currentSignal["Buy Range"] || "N/A"}
                     </td>
                     <td
                       className={`px-4 py-2 whitespace-nowrap text-[12px] ${textColor}`}
                     >
-                      {currentSignal.Sell_Range || "N/A"}
+                      {currentSignal["Sell Range"] || "N/A"}
                     </td>
                     <td
                       className={`px-4 py-2 whitespace-nowrap text-[12px] ${textColor}`}
                     >
-                      {currentSignal.Risk_To_Reward_Ratio || "N/A"}
+                      {currentSignal["Risk-To-Reward Ratio"] || "N/A"}
                     </td>
                     <td
                       className={`px-4 py-2 whitespace-nowrap text-[12px] ${textColor}`}
                     >
-                      {currentSignal.Stop_Loss || "N/A"}
+                      {currentSignal["Stop Loss"] || "N/A"}
                     </td>
                     <td
                       className={`px-4 py-2 whitespace-nowrap text-[12px] ${textColor}`}
@@ -323,7 +334,7 @@ const SignalTabs: React.FC<SignalTabsProps> = ({
                             : "text-yellow-600 dark:text-yellow-400"
                         }
                       >
-                        {currentSignal.Trade_Result || "N/A"}
+                        {currentSignal["Trade Result"] || "N/A"}
                       </span>
                     </td>
                   </tr>
