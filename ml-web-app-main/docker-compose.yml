@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  nextjs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '6000:6000'
+    environment:
+      - DATABASE_URL=postgres://user:password@db:5432/ai_trading_signals
+      - NODE_ENV=production
+    depends_on:
+      - db
+    restart: always
+volumes:
+  pgdata:
