@@ -20,12 +20,20 @@ logger = logging.getLogger(__name__)
 def get_db_connection():
     """Create a database connection"""
     try:
+        # conn = psycopg2.connect(
+        #     host=os.getenv('DB_HOST', 'localhost'),
+        #     port=os.getenv('DB_PORT', '5433'),
+        #     database=os.getenv('DB_NAME', 'merolagani_pg'),
+        #     user=os.getenv('DB_USER', 'postgres'),
+        #     password=os.getenv('DB_PASSWORD', 'postgres')
+        # )
+
         conn = psycopg2.connect(
-            host=os.getenv('DB_HOST', 'localhost'),
-            port=os.getenv('DB_PORT', '5433'),
-            database=os.getenv('DB_NAME', 'stock_market'),
-            user=os.getenv('DB_USER', 'postgres'),
-            password=os.getenv('DB_PASSWORD', 'postgres')
+            host=os.getenv('DB_HOST', 'wft-dev-postgres.postgres.database.azure.com'),
+            port=os.getenv('DB_PORT', '5432'),
+            database=os.getenv('DB_NAME', 'merolagani_pg'),
+            user=os.getenv('DB_USER', 'merolagani_user'),
+            password=os.getenv('DB_PASSWORD', 'X58Y03xkH6x1')
         )
         logger.info("Successfully connected to database")
         return conn
@@ -73,9 +81,34 @@ def store_zones(conn, zones, symbol, timeframe_days, zone_type):
     conn.commit()
     cursor.close()
 
-def analyze_zones(df, days, title_suffix, zone_type='resistance', symbol='NEPSE'):
+def merge_overlapping_zones(zones):
+    """Merge overlapping zones to ensure no overlap between support and resistance zones"""
+    if not zones:
+        return zones
+    
+    # Sort zones by center price
+    zones = sorted(zones, key=lambda x: x['center'])
+    merged_zones = []
+    current_zone = zones[0]
+    
+    for next_zone in zones[1:]:
+        # Check if zones overlap
+        if current_zone['top'] >= next_zone['bottom']:
+            # Merge zones by taking the min bottom and max top
+            current_zone['bottom'] = min(current_zone['bottom'], next_zone['bottom'])
+            current_zone['top'] = max(current_zone['top'], next_zone['top'])
+            current_zone['center'] = (current_zone['bottom'] + current_zone['top']) / 2
+            current_zone['points'] = pd.concat([current_zone['points'], next_zone['points']])
+        else:
+            merged_zones.append(current_zone)
+            current_zone = next_zone
+    
+    merged_zones.append(current_zone)
+    return merged_zones
+
+def analyze_zones(df, days, title_suffix, symbol='NEPSE'):
     """
-    Analyze either support or resistance zones for a specific timeframe
+    Analyze support and resistance zones for a specific timeframe with improved logic
     """
     # Filter data for specified timeframe
     start_date = df.index.max() - timedelta(days=days)
@@ -83,7 +116,7 @@ def analyze_zones(df, days, title_suffix, zone_type='resistance', symbol='NEPSE'
     
     if len(timeframe_df) < 2:
         print(f"Not enough data points for {title_suffix} analysis")
-        return None
+        return None, None
     
     # Get current price
     current_price = timeframe_df['close'].iloc[-1]
@@ -91,129 +124,148 @@ def analyze_zones(df, days, title_suffix, zone_type='resistance', symbol='NEPSE'
     # Use a smaller window for more sensitive detection
     window = max(3, min(15, days // 20))
     
-    if zone_type == 'resistance':
-        # Find resistance points
-        points = timeframe_df[timeframe_df['high'] >= timeframe_df['high'].rolling(window=window).max() * 0.995].copy()
-        price_column = 'high'
-    else:
-        # Find support points with stricter criteria
-        # Only consider points within 20% of current price
-        price_threshold = current_price * 0.8
-        points = timeframe_df[
-            (timeframe_df['low'] <= timeframe_df['low'].rolling(window=window).min() * 1.005) &
-            (timeframe_df['low'] >= price_threshold)
-        ].copy()
-        price_column = 'low'
+    # Initialize lists for support and resistance zones
+    support_zones = []
+    resistance_zones = []
     
-    if not points.empty:
-        # Cluster points
-        X = points[[price_column]].values
+    # Find resistance points
+    resistance_points = timeframe_df[timeframe_df['high'] >= timeframe_df['high'].rolling(window=window).max() * 0.995].copy()
+    # Find support points within 20% of current price
+    price_threshold = current_price * 0.8
+    support_points = timeframe_df[
+        (timeframe_df['low'] <= timeframe_df['low'].rolling(window=window).min() * 1.005) &
+        (timeframe_df['low'] >= price_threshold)
+    ].copy()
+    
+    # Process resistance zones
+    if not resistance_points.empty:
+        X = resistance_points[['high']].values
         eps_value = np.std(X) * 0.2
         db = DBSCAN(eps=eps_value, min_samples=2).fit(X)
-        points['cluster'] = db.labels_
+        resistance_points['cluster'] = db.labels_
         
-        # Calculate zones
-        zones = []
-        
-        for cluster in set(points['cluster']):
+        for cluster in set(resistance_points['cluster']):
             if cluster != -1:
-                cluster_points = points[points['cluster'] == cluster][price_column]
+                cluster_points = resistance_points[resistance_points['cluster'] == cluster]['high']
                 zone_center = cluster_points.mean()
-                # For support zones, use smaller width
-                if zone_type == 'support':
-                    zone_width = np.std(cluster_points) * 0.8 if len(cluster_points) > 1 else zone_center * 0.005
-                else:
-                    zone_width = np.std(cluster_points) * 1.5 if len(cluster_points) > 1 else zone_center * 0.01
-                
-                # Calculate the price difference in the zone
-                price_diff = zone_width * 2  # Total width of the zone
-                
-                # For support zones, only include if price difference is significant
-                if zone_type == 'support':
-                    # Minimum price difference of 0.5% of the zone center
-                    min_price_diff = zone_center * 0.005
-                    if price_diff < min_price_diff:
-                        continue
-                
-                zones.append({
+                zone_width = np.std(cluster_points) * 1.5 if len(cluster_points) > 1 else zone_center * 0.01
+                resistance_zones.append({
                     'bottom': zone_center - zone_width,
                     'center': zone_center,
                     'top': zone_center + zone_width,
-                    'points': points[points['cluster'] == cluster]
+                    'points': resistance_points[resistance_points['cluster'] == cluster]
                 })
+    
+    # Process support zones
+    if not support_points.empty:
+        X = support_points[['low']].values
+        eps_value = np.std(X) * 0.2
+        db = DBSCAN(eps=eps_value, min_samples=2).fit(X)
+        support_points['cluster'] = db.labels_
         
-        # Sort zones by price level
-        zones.sort(key=lambda x: x['center'])
-        
-        # For support zones, only keep zones within 20% of current price
-        if zone_type == 'support':
-            zones = [zone for zone in zones if zone['center'] >= price_threshold]
-        
-        # Store zones in database
-        conn = get_db_connection()
-        try:
-            store_zones(conn, zones, symbol, days, zone_type)
-            print(f"Stored {len(zones)} {zone_type} zones in database")
-        except Exception as e:
-            print(f"Error storing zones in database: {e}")
-        finally:
-            conn.close()
-        
-        # Print zones
-        print(f"\n{zone_type.title()} Zones ({title_suffix}):")
-        print("-" * 50)
-        for i, zone in enumerate(zones, 1):
-            price_diff = zone['top'] - zone['bottom']
-            print(f"Zone {i}: {zone['bottom']:.2f} - {zone['top']:.2f} (Width: {price_diff:.2f})")
-        
-        return True
-    else:
-        print(f"No {zone_type} zones found for {title_suffix} timeframe")
-        return None
-
-def process_file(file_path):
-    """Process a single daily data file"""
+        for cluster in set(support_points['cluster']):
+            if cluster != -1:
+                cluster_points = support_points[support_points['cluster'] == cluster]['low']
+                zone_center = cluster_points.mean()
+                zone_width = np.std(cluster_points) * 0.8 if len(cluster_points) > 1 else zone_center * 0.005
+                price_diff = zone_width * 2
+                min_price_diff = zone_center * 0.005
+                if price_diff >= min_price_diff:
+                    support_zones.append({
+                        'bottom': zone_center - zone_width,
+                        'center': zone_center,
+                        'top': zone_center + zone_width,
+                        'points': support_points[support_points['cluster'] == cluster]
+                    })
+    
+    # Convert zones based on close price
+    final_support_zones = []
+    final_resistance_zones = []
+    
+    # Process resistance zones
+    for zone in resistance_zones:
+        if zone['top'] < current_price:
+            # Convert resistance zone below close price to support zone
+            final_support_zones.append(zone)
+        elif zone['bottom'] <= current_price <= zone['top']:
+            # Close price is within the zone, treat as resistance
+            final_resistance_zones.append(zone)
+        elif zone['bottom'] > current_price:
+            # Resistance zone above close price
+            final_resistance_zones.append(zone)
+    
+    # Process support zones
+    for zone in support_zones:
+        if zone['bottom'] > current_price:
+            # Convert support zone above close price to resistance zone
+            final_resistance_zones.append(zone)
+        elif zone['bottom'] <= current_price <= zone['top']:
+            # Close price is within the zone, treat as support
+            final_support_zones.append(zone)
+        elif zone['top'] <= current_price:
+            # Support zone below or at close price
+            final_support_zones.append(zone)
+    
+    # Merge overlapping zones
+    final_support_zones = merge_overlapping_zones(final_support_zones)
+    final_resistance_zones = merge_overlapping_zones(final_resistance_zones)
+    
+    # Ensure no overlap between support and resistance zones
+    non_overlapping_support_zones = []
+    non_overlapping_resistance_zones = []
+    
+    for s_zone in final_support_zones:
+        overlap = False
+        for r_zone in final_resistance_zones:
+            if not (s_zone['top'] < r_zone['bottom'] or s_zone['bottom'] > r_zone['top']):
+                overlap = True
+                # If overlap occurs, prioritize based on proximity to current price
+                s_dist = abs(s_zone['center'] - current_price)
+                r_dist = abs(r_zone['center'] - current_price)
+                if s_dist < r_dist:
+                    non_overlapping_support_zones.append(s_zone)
+                else:
+                    non_overlapping_resistance_zones.append(r_zone)
+        if not overlap:
+            non_overlapping_support_zones.append(s_zone)
+    
+    for r_zone in final_resistance_zones:
+        if all(r_zone['bottom'] > s_zone['top'] or r_zone['top'] < s_zone['bottom'] for s_zone in final_support_zones):
+            non_overlapping_resistance_zones.append(r_zone)
+    
+    # Store zones in database
+    conn = get_db_connection()
     try:
-        # Extract symbol from filename
-        filename = os.path.basename(file_path)
-        symbol = filename.split('_')[0]
-        
-        print(f"\nProcessing {symbol}...")
-        
-        # Load and process the data
-        df = pd.read_csv(file_path)
-        df['date'] = pd.to_datetime(df['date'])
-        df.set_index('date', inplace=True)
-        
-        # Sort index properly to ensure chronological order
-        df = df.sort_index()
-        
-        # Only use 90-day timeframe
-        days = 90
-        title = "3 Months"
-        
-        print(f"\nAnalyzing {title} timeframe...")
-        
-        # Generate resistance zones
-        resistance_result = analyze_zones(df, days, title, 'resistance', symbol)
-        if resistance_result:
-            print(f"Successfully analyzed resistance zones for {title}")
-        
-        # Generate support zones
-        support_result = analyze_zones(df, days, title, 'support', symbol)
-        if support_result:
-            print(f"Successfully analyzed support zones for {title}")
-                
+        store_zones(conn, non_overlapping_support_zones, symbol, days, 'support')
+        store_zones(conn, non_overlapping_resistance_zones, symbol, days, 'resistance')
+        print(f"Stored {len(non_overlapping_support_zones)} support zones and {len(non_overlapping_resistance_zones)} resistance zones in database")
     except Exception as e:
-        print(f"Error processing file {file_path}: {e}")
+        print(f"Error storing zones in database: {e}")
+    finally:
+        conn.close()
+    
+    # Print zones
+    print(f"\nSupport Zones ({title_suffix}):")
+    print("-" * 50)
+    for i, zone in enumerate(non_overlapping_support_zones, 1):
+        price_diff = zone['top'] - zone['bottom']
+        print(f"Zone {i}: {zone['bottom']:.2f} - {zone['top']:.2f} (Width: {price_diff:.2f})")
+    
+    print(f"\nResistance Zones ({title_suffix}):")
+    print("-" * 50)
+    for i, zone in enumerate(non_overlapping_resistance_zones, 1):
+        price_diff = zone['top'] - zone['bottom']
+        print(f"Zone {i}: {zone['bottom']:.2f} - {zone['top']:.2f} (Width: {price_diff:.2f})")
+    
+    return non_overlapping_support_zones, non_overlapping_resistance_zones
 
 def cleanup_zones(conn):
     """Clean up support and resistance zones tables"""
     try:
         cursor = conn.cursor()
-        # cursor.execute("DELETE FROM support_zones")
-        # cursor.execute("DELETE FROM resistance_zones")
-        # conn.commit()
+        cursor.execute("DELETE FROM support_zones")
+        cursor.execute("DELETE FROM resistance_zones")
+        conn.commit()
         logger.info("Successfully cleaned up zones tables")
     except Exception as e:
         logger.error(f"Error cleaning up zones tables: {e}")
@@ -222,31 +274,63 @@ def cleanup_zones(conn):
         cursor.close()
 
 def main():
-    # Get the absolute path to the backend directory
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    all_data_dir = os.path.join(base_dir, "all-data")
+    data_dir = os.path.join(base_dir, "data")
     
-    # Get all CSV files in the all-data directory
-    csv_files = glob.glob(os.path.join(all_data_dir, "*_daily_data_*.csv"))
+    data_file = os.path.join(data_dir, "daily_data_202507172305.csv")
     
-    if not csv_files:
-        print("No daily data files found in the all-data directory")
+    if not os.path.exists(data_file):
+        logger.error("No data file found in the data directory")
         return
     
-    print(f"Found {len(csv_files)} daily data files to process")
+    logger.info("Found data file to process")
     
-    # Get database connection and clean up existing data
+    # Read the single data file
+    df = pd.read_csv(data_file)
+    df['date'] = pd.to_datetime(df['date'])
+    
+    # Get unique symbols and sort them alphabetically
+    symbols = sorted(df['symbol'].unique())
+    logger.info(f"Found {len(symbols)} unique symbols to process")
+    
+    #symbols = ['NEPSE']
     conn = get_db_connection()
     try:
         cleanup_zones(conn)
-        
-        # Process each file
-        for file_path in csv_files:
-            process_file(file_path)
-        
-        print("\nAnalysis complete! Check the database for stored zones.")
+        for symbol in symbols:
+            # Filter data for current symbol
+            symbol_df = df[df['symbol'] == symbol].copy()
+            symbol_df.set_index('date', inplace=True)
+            symbol_df = symbol_df.sort_index()
+            
+            # Validate required columns
+            required_columns = ['open', 'high', 'low', 'close', 'volume']
+            if not all(col in symbol_df.columns for col in required_columns):
+                logger.error(f"Missing required columns for {symbol}: {required_columns}")
+                continue
+                
+            process_symbol(symbol_df, symbol)
+        logger.info("Analysis complete! Check the database for stored zones.")
     finally:
         conn.close()
+
+def process_symbol(df, symbol):
+    """Process data for a single symbol"""
+    try:
+        logger.info(f"Processing {symbol}...")
+        
+        days = 90
+        title = "3 Months"
+        
+        logger.info(f"Analyzing {title} timeframe...")
+
+        support_zones, resistance_zones = analyze_zones(df, days, title, symbol)
+        if support_zones is not None or resistance_zones is not None:
+            print(f"Successfully analyzed zones for {title}")
+                
+    except Exception as e:
+        logger.error(f"Error processing symbol {symbol}: {e}")
+
 
 if __name__ == "__main__":
     main()
