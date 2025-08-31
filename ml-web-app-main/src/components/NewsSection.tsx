@@ -48,11 +48,12 @@ const NewsSection: React.FC = () => {
         {activeTab === "top" ? (
           // Top News Content
           <div className="space-y-3 sm:space-y-4">
+            {/* News Item 1 */}
             <div className="">
               <div className={`px-1 transition-colors border-b pb-3 ${borderColor}`}>
-                {/* Author Info - Responsive */}
-                <div className="flex items-center gap-2 mb-2 flex-wrap">
-                  <div className="relative w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0">
+                {/* Author Info - Only mobile optimized */}
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="relative w-5 sm:w-6 h-5 sm:h-6 flex-shrink-0">
                     <Image
                       src="https://s3.coinmarketcap.com/static-gravity/image/fba756c012164c6c9d23f93906d30875.jpg"
                       alt="avatar frame"
@@ -60,18 +61,23 @@ const NewsSection: React.FC = () => {
                       className="rounded-full"
                     />
                   </div>
-                  <p className={`text-xs sm:text-sm ${secondaryTextColor} truncate`}>Ram Bahadhur Panday</p>
-                  <p className={`text-10 sm:text-11 font-normal ${secondaryTextColor} flex-shrink-0`}>2 hours ago</p>
+                  <p className={`text-[10px] sm:text-sm ${secondaryTextColor} truncate flex-1 min-w-0`}>
+                    Ram Bahadhur Panday
+                  </p>
+                  <p className={`text-[9px] sm:text-[11px] font-normal ${secondaryTextColor} flex-shrink-0`}>
+                    2 hours ago
+                  </p>
                 </div>
-                {/* News Content - Responsive */}
-                <h3 className={`text-xs sm:text-sm font-medium ${textColor} leading-relaxed`}>
+                
+                {/* News Content - Mobile optimized, desktop unchanged */}
+                <h3 className={`text-[10px] sm:text-sm font-medium ${textColor} leading-relaxed`}>
                   🧠 3.7M votes — and 81% are bullish on NBL. <br />
                   Sentiment is loud. <br />
                   But remember: euphoria ≠ breakout. <br />
                   Watch the NPR 86K level{" "}
                 </h3>
-                {/* Image - Responsive */}
-                <div className="relative w-full h-32 sm:h-40 mt-2">
+                {/* Image - Smaller on mobile only */}
+                <div className="relative w-full h-20 sm:h-40 mt-2">
                   <Image
                     src="/images/image.jpeg"
                     alt="news image"
@@ -81,9 +87,11 @@ const NewsSection: React.FC = () => {
                 </div>
               </div>
             </div>
+            
+            {/* News Item 2 */}
             <div className={`px-1 transition-colors border-b pb-3 ${borderColor}`}>
-              <div className="flex items-center gap-2 mb-2 flex-wrap">
-                <div className="relative w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="relative w-5 sm:w-6 h-5 sm:h-6 flex-shrink-0">
                   <Image
                     src="https://s3.coinmarketcap.com/static-gravity/image/fba756c012164c6c9d23f93906d30875.jpg"
                     alt="avatar frame"
@@ -91,14 +99,18 @@ const NewsSection: React.FC = () => {
                     className="rounded-full"
                   />
                 </div>
-                <p className={`text-xs sm:text-sm ${secondaryTextColor} truncate`}>Hari Singh</p>
-                <p className={`text-10 sm:text-11 font-normal ${secondaryTextColor} flex-shrink-0`}>2 hours ago</p>
+                <p className={`text-[10px] sm:text-sm ${secondaryTextColor} truncate flex-1 min-w-0`}>
+                  Hari Singh
+                </p>
+                <p className={`text-[9px] sm:text-[11px] font-normal ${secondaryTextColor} flex-shrink-0`}>
+                  2 hours ago
+                </p>
               </div>
-              <h3 className={`text-xs sm:text-sm font-medium ${textColor} leading-relaxed`}>
+              <h3 className={`text-[10px] sm:text-sm font-medium ${textColor} leading-relaxed`}>
                 NBL train is moving, those who want to go to the moon, get on Ride on the DOGEMARS
                 train👇👇 👇y gfh hgg
               </h3>
-              <div className="relative w-full h-32 sm:h-40 mt-2">
+              <div className="relative w-full h-20 sm:h-40 mt-2">
                 <Image
                   src="/images/image.jpeg"
                   alt="news image"
@@ -111,9 +123,10 @@ const NewsSection: React.FC = () => {
         ) : (
           // Latest News Content
           <div className="space-y-3 sm:space-y-4">
+            {/* Latest News Item 1 */}
             <div className={`px-1 transition-colors border-b pb-3 ${borderColor}`}>
-              <div className="flex items-center gap-2 mb-2 flex-wrap">
-                <div className="relative w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="relative w-5 sm:w-6 h-5 sm:h-6 flex-shrink-0">
                   <Image
                     src="https://s3.coinmarketcap.com/static-gravity/image/fba756c012164c6c9d23f93906d30875.jpg"
                     alt="avatar frame"
@@ -121,14 +134,18 @@ const NewsSection: React.FC = () => {
                     className="rounded-full"
                   />
                 </div>
-                <p className={`text-xs sm:text-sm ${secondaryTextColor} truncate`}>Hari Singh</p>
-                <p className={`text-10 sm:text-11 font-normal ${secondaryTextColor} flex-shrink-0`}>2 hours ago</p>
+                <p className={`text-[10px] sm:text-sm ${secondaryTextColor} truncate flex-1 min-w-0`}>
+                  Hari Singh
+                </p>
+                <p className={`text-[9px] sm:text-[11px] font-normal ${secondaryTextColor} flex-shrink-0`}>
+                  2 hours ago
+                </p>
               </div>
-              <h3 className={`text-xs sm:text-sm font-medium ${textColor} leading-relaxed`}>
+              <h3 className={`text-[10px] sm:text-sm font-medium ${textColor} leading-relaxed`}>
                 NBL train is moving, those who want to go to the moon, get on Ride on the DOGEMARS
                 train👇👇 👇y gfh hgg
               </h3>
-              <div className="relative w-full h-32 sm:h-40 mt-2">
+              <div className="relative w-full h-20 sm:h-40 mt-2">
                 <Image
                   src="/images/image.jpeg"
                   alt="news image"
@@ -137,10 +154,12 @@ const NewsSection: React.FC = () => {
                 />
               </div>
             </div>
+            
+            {/* Latest News Item 2 */}
             <div className="">
               <div className={`px-1 transition-colors border-b pb-3 ${borderColor}`}>
-                <div className="flex items-center gap-2 mb-2 flex-wrap">
-                  <div className="relative w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="relative w-4 h-4 xs:w-5 xs:h-5 sm:w-6 sm:h-6 flex-shrink-0">
                     <Image
                       src="https://s3.coinmarketcap.com/static-gravity/image/2b0fd7d35bbb4c3ea831dea150b907e6.png"
                       alt="avatar frame"
@@ -148,30 +167,39 @@ const NewsSection: React.FC = () => {
                       className="rounded-full"
                     />
                   </div>
-                  <p className={`text-xs sm:text-sm ${secondaryTextColor} truncate`}>Ram Bahadhur Panday</p>
-                  <p className={`text-10 sm:text-11 font-normal ${secondaryTextColor} flex-shrink-0`}>2 hours ago</p>
+                  <p className={`text-[10px] xs:text-xs sm:text-sm ${secondaryTextColor} truncate flex-1 min-w-0`}>
+                    Ram Bahadhur Panday
+                  </p>
+                  <p className={`text-[9px] xs:text-[10px] sm:text-[11px] font-normal ${secondaryTextColor} flex-shrink-0`}>
+                    2 hours ago
+                  </p>
                 </div>
-                <h3 className={`text-xs sm:text-sm font-medium ${textColor} leading-relaxed`}>
-                  🧠 3.7M votes — and 81% are bullish on NBL. <br />
-                  Sentiment is loud. <br />
-                  But remember: euphoria ≠ breakout. <br />
-                  Watch the NPR 86K level{" "}
-                </h3>
-                <div className="relative w-full h-32 sm:h-40 mt-2">
-                  <Image
-                    src="/images/image.jpeg"
-                    alt="news image"
-                    fill
-                    className="rounded-lg object-cover"
-                  />
+                <div className="flex flex-col sm:flex-row sm:gap-3">
+                  <div className="flex-1 mb-2 sm:mb-0">
+                    <h3 className={`text-[11px] xs:text-xs sm:text-sm font-medium ${textColor} leading-relaxed`}>
+                      🧠 3.7M votes — and 81% are bullish on NBL. <br />
+                      Sentiment is loud. <br />
+                      But remember: euphoria ≠ breakout. <br />
+                      Watch the NPR 86K level{" "}
+                    </h3>
+                  </div>
+                  <div className="relative w-full h-24 xs:h-28 sm:w-32 sm:h-20 md:w-36 md:h-24 lg:w-40 lg:h-28 flex-shrink-0">
+                    <Image
+                      src="/images/image.jpeg"
+                      alt="news image"
+                      fill
+                      className="rounded-lg object-cover"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
 
+            {/* Latest News Item 3 */}
             <div className="">
               <div className={`px-1 transition-colors border-b pb-3 ${borderColor}`}>
-                <div className="flex items-center gap-2 mb-2 flex-wrap">
-                  <div className="relative w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="relative w-4 h-4 xs:w-5 xs:h-5 sm:w-6 sm:h-6 flex-shrink-0">
                     <Image
                       src="https://s3.coinmarketcap.com/static-gravity/image/2b0fd7d35bbb4c3ea831dea150b907e6.png"
                       alt="avatar frame"
@@ -179,22 +207,30 @@ const NewsSection: React.FC = () => {
                       className="rounded-full"
                     />
                   </div>
-                  <p className={`text-xs sm:text-sm ${secondaryTextColor} truncate`}>Ram Bahadhur Panday</p>
-                  <p className={`text-10 sm:text-11 font-normal ${secondaryTextColor} flex-shrink-0`}>2 hours ago</p>
+                  <p className={`text-[10px] xs:text-xs sm:text-sm ${secondaryTextColor} truncate flex-1 min-w-0`}>
+                    Ram Bahadhur Panday
+                  </p>
+                  <p className={`text-[9px] xs:text-[10px] sm:text-[11px] font-normal ${secondaryTextColor} flex-shrink-0`}>
+                    2 hours ago
+                  </p>
                 </div>
-                <h3 className={`text-xs sm:text-sm font-medium ${textColor} leading-relaxed`}>
-                  🧠 3.7M votes — and 81% are bullish on NBL. <br />
-                  Sentiment is loud. <br />
-                  But remember: euphoria ≠ breakout. <br />
-                  Watch the NPR 86K level{" "}
-                </h3>
-                <div className="relative w-full h-32 sm:h-40 mt-2">
-                  <Image
-                    src="/images/image.jpeg"
-                    alt="news image"
-                    fill
-                    className="rounded-lg object-cover"
-                  />
+                <div className="flex flex-col sm:flex-row sm:gap-3">
+                  <div className="flex-1 mb-2 sm:mb-0">
+                    <h3 className={`text-[11px] xs:text-xs sm:text-sm font-medium ${textColor} leading-relaxed`}>
+                      🧠 3.7M votes — and 81% are bullish on NBL. <br />
+                      Sentiment is loud. <br />
+                      But remember: euphoria ≠ breakout. <br />
+                      Watch the NPR 86K level{" "}
+                    </h3>
+                  </div>
+                  <div className="relative w-full h-24 xs:h-28 sm:w-32 sm:h-20 md:w-36 md:h-24 lg:w-40 lg:h-28 flex-shrink-0">
+                    <Image
+                      src="/images/image.jpeg"
+                      alt="news image"
+                      fill
+                      className="rounded-lg object-cover"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
