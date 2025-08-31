@@ -66,7 +66,7 @@ export default function Dashboard() {
       {showMobileMenu && (
         <div className="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50" onClick={() => setShowMobileMenu(false)}>
           <div 
-            className={`w-80 h-full ${bgColor} ${scrollbarColor} overflow-y-auto`}
+            className={`w-96 h-full ${bgColor} ${scrollbarColor} overflow-y-auto`}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex flex-col gap-4 p-4">

@@ -14,7 +14,7 @@ function ClientLayoutContent({ children }: { children: React.ReactNode }) {
   const isAdminPage = pathname?.includes('/admin');
 
   return (
-    <div className="flex h-full w-full overflow-hidden">
+    <div className="flex h-screen w-full overflow-hidden">
       {!isEditPage && !isAdminPage && (
         <Sidebar 
           onCollapseChange={setIsSidebarExpanded}
