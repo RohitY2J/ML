@@ -133,7 +133,7 @@ export default function Sidebar({ onCollapseChange, onPathChange, selectedPath }
 
   return (
     <div
-      className={`${bgColor} h-screen ${
+      className={`${bgColor} lg:h-screen ${
         isCollapsed ? "w-20" : "w-60"
       } transition-all duration-300 border-r ${borderColor} flex flex-col sm:${isCollapsed ? "w-20" : "w-60"}`}
     >

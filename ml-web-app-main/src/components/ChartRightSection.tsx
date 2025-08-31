@@ -46,9 +46,21 @@ const ChartRightSection: React.FC<ChartRightSectionProps> = ({
   const { theme } = useTheme();
   const pathname = usePathname();
   const isEditPage = pathname?.includes("/edit");
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check if mobile on mount and resize
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Main collapse state for the entire right section
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   // Vertical collapse states for individual sections
   const [verticallyCollapsedSections, setVerticallyCollapsedSections] = useState({
@@ -158,6 +170,15 @@ const ChartRightSection: React.FC<ChartRightSectionProps> = ({
     });
   };
 
+  // Update collapse state when mobile state changes
+  useEffect(() => {
+    if (isMobile) {
+      setIsCollapsed(false);
+    }
+    else
+      setIsCollapsed(true);
+  }, [isMobile]);
+
   // Notify parent of initial state
   useEffect(() => {
     if (onCollapseChange) {
@@ -201,24 +222,26 @@ const ChartRightSection: React.FC<ChartRightSectionProps> = ({
       {!sectionCollapsed && (
         <div
           onClick={() => toggleVerticalCollapse(sectionKey)}
-          className={`px-4 py-2 ${textColor} border-b ${borderColor} whitespace-nowrap hover:bg-opacity-80 transition-colors duration-200`}
+          className={`px-3 sm:px-4 py-2 ${textColor} border-b ${borderColor} whitespace-nowrap hover:bg-opacity-80 transition-colors duration-200`}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-base text-gray-400">{icon}</span>
-              <span className="font-medium text-sm opacity-80">{title}</span>
+              <span className="text-sm sm:text-base text-gray-400">{icon}</span>
+              <span className="font-medium text-xs sm:text-sm opacity-80">{title}</span>
             </div>
             <span className="text-gray-400">
               {isVerticallyCollapsed ? (
-                <RiArrowRightSLine className="w-4 h-4" />
+                <RiArrowRightSLine className="w-3 h-3 sm:w-4 sm:h-4" />
               ) : (
-                <RiArrowDownSLine className="w-4 h-4" />
+                <RiArrowDownSLine className="w-3 h-3 sm:w-4 sm:h-4" />
               )}
             </span>
           </div>
         </div>
       )}
-      {!sectionCollapsed && !isVerticallyCollapsed && <div className="p-3 w-full">{children}</div>}
+      {!sectionCollapsed && !isVerticallyCollapsed && (
+        <div className="p-2 sm:p-3 w-full">{children}</div>
+      )}
       {sectionCollapsed && (
         <button
           onClick={() => {
@@ -234,10 +257,10 @@ const ChartRightSection: React.FC<ChartRightSectionProps> = ({
               });
             }, 300); // Wait for horizontal expansion animation
           }}
-          className="p-3 items-center flex justify-center"
+          className="p-2 sm:p-3 items-center flex justify-center"
         >
           <span
-            className={`text-xl text-center text-gray-400 group-hover:${textColor} transition-colors duration-200`}
+            className={`text-lg sm:text-xl text-center text-gray-400 group-hover:${textColor} transition-colors duration-200`}
           >
             {icon}
           </span>
@@ -249,14 +272,17 @@ const ChartRightSection: React.FC<ChartRightSectionProps> = ({
   return (
     <div
       className={`h-full flex flex-col ${
-        isCollapsed ? "w-20" : "w-80"
-      } transition-all duration-300 border-l ${borderColor}`}
+        isCollapsed ? "w-16 sm:w-20" : "w-full"
+      } transition-all duration-300 ${
+        // On mobile, no border-l when expanded to use full width
+        isMobile && !isCollapsed ? "" : `border-l ${borderColor}`
+      }`}
     >
       {/* Header */}
-      <div className="p-3 flex items-center justify-center"></div>
+      <div className="p-2 sm:p-3 flex items-center justify-center"></div>
 
       {/* Content Sections */}
-      <div className="flex-1 overflow-y-auto p-3 pt-8 space-y-3">
+      <div className="flex-1 overflow-y-auto p-2 sm:p-3 pt-4 sm:pt-8 space-y-2 sm:space-y-3">
         {/* Current Strategy Section */}
         <CollapsibleSection
           title="Current Strategy"
@@ -352,17 +378,17 @@ const ChartRightSection: React.FC<ChartRightSectionProps> = ({
         )}
       </div>
 
-      {/* Collapse Button at Bottom */}
-      <div className={`p-3 border-t flex flex-col gap-4 ${borderColor}`}>
+      {/* Collapse Button at Bottom - Responsive */}
+      <div className={`p-2 sm:p-3 border-t flex flex-col gap-2 max-md:invisible sm:gap-4 ${borderColor}`}>
         {/* TODO: Bagale: Add dark/light mode button here with rounded border, no border color, add padding, transition, and hover effects. No need to add text for light and dark mode */}
         <button
           onClick={toggleCollapse}
-          className={`w-full flex items-center justify-center p-2 rounded-lg ${hoverBgColor} ${textColor} transition-colors duration-200`}
+          className={`w-full flex items-center justify-center p-1.5 sm:p-2 rounded-lg ${hoverBgColor} ${textColor} transition-colors duration-200`}
         >
           {isCollapsed ? (
-            <RiMenuUnfoldLine className="w-5 h-5" />
+            <RiMenuUnfoldLine className="w-4 h-4 sm:w-5 sm:h-5" />
           ) : (
-            <RiMenuFoldLine className="w-5 h-5" />
+            <RiMenuFoldLine className="w-4 h-4 sm:w-5 sm:h-5" />
           )}
         </button>
       </div>

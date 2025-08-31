@@ -17,17 +17,18 @@ const MarketBreadth: React.FC<MarketStatsProp> = ({marketStats= {}}) => {
   ];
 
   return (
-    <div className={`w-full px-5 rounded-lg h-full`}>
-      <div className="grid grid-cols-3 gap-4">
+    <div className={`w-full px-3 sm:px-5 rounded-lg h-full`}>
+      {/* Responsive grid: single column on mobile, 3 columns on larger screens */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4">
         {stats.map((stat) => (
           <div 
             key={stat.label} 
-            className={`${stat.bgColor} rounded-lg p-4 flex flex-col items-center justify-center`}
+            className={`${stat.bgColor} rounded-lg p-3 sm:p-4 flex flex-col items-center justify-center min-h-[60px] sm:min-h-[80px]`}
           >
-            <div className={`text-[20px] font-medium ${stat.color}`}>
+            <div className={`text-lg sm:text-[20px] font-medium ${stat.color}`}>
               {stat.value}
             </div>
-            <div className={`text-[13px] ${textColor} mt-1`}>
+            <div className={`text-xs sm:text-[13px] ${textColor} mt-1 text-center`}>
               {stat.label}
             </div>
           </div>

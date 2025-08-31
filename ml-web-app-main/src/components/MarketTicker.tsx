@@ -23,6 +23,18 @@ const MarketTicker: React.FC<MarketTickerProps> = ({ data }) => {
   const tickerRef = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
   const [isScrolling, setIsScrolling] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check if mobile on mount and resize
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     const ticker = tickerRef.current;
@@ -34,13 +46,13 @@ const MarketTicker: React.FC<MarketTickerProps> = ({ data }) => {
       if (ticker.scrollLeft >= ticker.scrollWidth - ticker.clientWidth) {
         ticker.scrollLeft = 0;
       } else {
-        ticker.scrollLeft += 1;
+        ticker.scrollLeft += isMobile ? 0.5 : 1; // Slower scroll on mobile
       }
     };
 
-    const interval = setInterval(scrollTicker, 30);
+    const interval = setInterval(scrollTicker, isMobile ? 50 : 30); // Slower interval on mobile
     return () => clearInterval(interval);
-  }, [isScrolling]);
+  }, [isScrolling, isMobile]);
 
   const bgColor = theme === 'dark' ? 'bg-dark-light' : 'bg-gray-300/40';
   const textColor = theme === 'dark' ? 'text-[#D1D4DC]' : 'text-gray-900';
@@ -59,6 +71,8 @@ const MarketTicker: React.FC<MarketTickerProps> = ({ data }) => {
       className={`${bgColor} border-t ${borderColor} py-2`}
       onMouseEnter={() => setIsScrolling(false)}
       onMouseLeave={() => setIsScrolling(true)}
+      onTouchStart={() => setIsScrolling(false)}
+      onTouchEnd={() => setIsScrolling(true)}
     >
       <div
         ref={tickerRef}
@@ -71,20 +85,28 @@ const MarketTicker: React.FC<MarketTickerProps> = ({ data }) => {
         {sortedData.map((item) => (
           <div
             key={item.key}
-            className="flex items-center gap-4 px-4 border-r border-gray-200 last:border-r-0 min-w-[250px]"
+            className={`flex items-center gap-2 sm:gap-4 px-2 sm:px-4 border-r border-gray-200 last:border-r-0 ${
+              isMobile ? 'min-w-[180px]' : 'min-w-[250px]'
+            }`}
           >
             <div className="flex flex-col min-w-0 flex-1">
-              <span className={`text-11 font-semibold ${textColor} truncate`}>{item.n}</span>
-              <span className={`text-11 ${secondaryTextColor}`}>
-                {item.v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              <span className={`text-10 sm:text-11 font-semibold ${textColor} truncate`}>{item.n}</span>
+              <span className={`text-10 sm:text-11 ${secondaryTextColor}`}>
+                {item.v.toLocaleString('en-US', { 
+                  minimumFractionDigits: isMobile ? 1 : 2, 
+                  maximumFractionDigits: 2 
+                })}
               </span>
             </div>
             <div className="flex flex-col items-end flex-shrink-0">
-              <span className={`text-11 font-semibold ${item.pc >= 0 ? positiveColor : negativeColor}`}>
-                {item.pc >= 0 ? '+' : ''}{item.pc.toFixed(2)}%
+              <span className={`text-10 sm:text-11 font-semibold ${item.pc >= 0 ? positiveColor : negativeColor}`}>
+                {item.pc >= 0 ? '+' : ''}{item.pc.toFixed(isMobile ? 1 : 2)}%
               </span>
-              <span className={`text-11 ${secondaryTextColor}`}>
-                {item.t.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              <span className={`text-10 sm:text-11 ${secondaryTextColor}`}>
+                {item.t.toLocaleString('en-US', { 
+                  minimumFractionDigits: isMobile ? 1 : 2, 
+                  maximumFractionDigits: 2 
+                })}
               </span>
             </div>
           </div>
@@ -93,20 +115,28 @@ const MarketTicker: React.FC<MarketTickerProps> = ({ data }) => {
         {sortedData.map((item) => (
           <div
             key={`${item.key}-duplicate`}
-            className="flex items-center gap-4 px-4 border-r border-gray-200 last:border-r-0 min-w-[250px]"
+            className={`flex items-center gap-2 sm:gap-4 px-2 sm:px-4 border-r border-gray-200 last:border-r-0 ${
+              isMobile ? 'min-w-[180px]' : 'min-w-[250px]'
+            }`}
           >
             <div className="flex flex-col min-w-0 flex-1">
-              <span className={`text-11 font-semibold ${textColor} truncate`}>{item.n}</span>
-              <span className={`text-11 ${secondaryTextColor}`}>
-                {item.v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              <span className={`text-10 sm:text-11 font-semibold ${textColor} truncate`}>{item.n}</span>
+              <span className={`text-10 sm:text-11 ${secondaryTextColor}`}>
+                {item.v.toLocaleString('en-US', { 
+                  minimumFractionDigits: isMobile ? 1 : 2, 
+                  maximumFractionDigits: 2 
+                })}
               </span>
             </div>
             <div className="flex flex-col items-end flex-shrink-0">
-              <span className={`text-11 font-semibold ${item.pc >= 0 ? positiveColor : negativeColor}`}>
-                {item.pc >= 0 ? '+' : ''}{item.pc.toFixed(2)}%
+              <span className={`text-10 sm:text-11 font-semibold ${item.pc >= 0 ? positiveColor : negativeColor}`}>
+                {item.pc >= 0 ? '+' : ''}{item.pc.toFixed(isMobile ? 1 : 2)}%
               </span>
-              <span className={`text-11 ${secondaryTextColor}`}>
-                {item.t.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              <span className={`text-10 sm:text-11 ${secondaryTextColor}`}>
+                {item.t.toLocaleString('en-US', { 
+                  minimumFractionDigits: isMobile ? 1 : 2, 
+                  maximumFractionDigits: 2 
+                })}
               </span>
             </div>
           </div>
@@ -116,4 +146,4 @@ const MarketTicker: React.FC<MarketTickerProps> = ({ data }) => {
   );
 };
 
-export default MarketTicker; 
+export default MarketTicker;

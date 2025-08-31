@@ -27,9 +27,47 @@ const Gainers: React.FC = () => {
   ];
 
   return (
-    <div className={`${bgColor} p-4`}>
-      <h3 className={`text-sm font-semibold mb-4 ${textColor}`}>Top Gainers</h3>
-      <div className="overflow-x-auto">
+    <div className={`${bgColor} p-3 sm:p-4`}>
+      <h3 className={`text-sm font-semibold mb-3 sm:mb-4 ${textColor}`}>Top Gainers</h3>
+      
+      {/* Mobile Card Layout */}
+      <div className="block sm:hidden space-y-3">
+        {gainers.map((gainer) => (
+          <div
+            key={gainer.symbol}
+            className={`border ${borderColor} rounded-lg p-3`}
+          >
+            <div className="flex justify-between items-start mb-2">
+              <span className={`text-sm font-semibold ${textColor}`}>
+                {gainer.symbol}
+              </span>
+              <span className={`text-sm ${positiveColor}`}>
+                +{gainer.change.toFixed(2)}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <div>
+                <p className={`text-xs ${secondaryTextColor}`}>LTP</p>
+                <p className={`text-sm ${textColor}`}>
+                  {gainer.ltp.toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </p>
+              </div>
+              <div className="text-right">
+                <p className={`text-xs ${secondaryTextColor}`}>Qty</p>
+                <p className={`text-sm ${textColor}`}>
+                  {gainer.qty.toLocaleString()}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop Table Layout */}
+      <div className="hidden sm:block overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr className={`text-left text-11 ${secondaryTextColor}`}>

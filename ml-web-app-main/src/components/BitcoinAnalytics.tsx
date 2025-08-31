@@ -11,13 +11,16 @@ const BitcoinAnalytics: React.FC = () => {
   const textColor = theme === 'dark' ? 'text-[#D1D4DC]' : 'text-black-100';
 
   return (
-    <div className="flex flex-col p-6">
-      <h2 className={`text-[20px] font-medium mb-4 ${textColor}`}>NEPSE Analytics</h2>
+    <div className="flex flex-col p-3 sm:p-4 lg:p-6">
+      <h2 className={`text-lg sm:text-xl lg:text-[20px] font-medium mb-3 sm:mb-4 ${textColor}`}>NEPSE Analytics</h2>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Responsive Grid: Single column on mobile, 2 columns on medium+ screens */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Previous 3 Days Close Price */}
-        <div className={`${cardBgColor} p-5 rounded-lg flex flex-col`}>
-          <h3 className={`text-[13px] font-medium mb-4 ${textColor}`}>Previous 3 Days Close Price</h3>
+        <div className={`${cardBgColor} p-3 sm:p-4 lg:p-5 rounded-lg flex flex-col min-h-[120px] sm:min-h-[140px] lg:min-h-[160px]`}>
+          <h3 className={`text-xs sm:text-sm lg:text-[13px] font-medium mb-3 sm:mb-4 ${textColor}`}>
+            Previous 3 Days Close Price
+          </h3>
           <div className="flex-1">
             <PercentageBar 
               segments={[
@@ -30,8 +33,10 @@ const BitcoinAnalytics: React.FC = () => {
         </div>
 
         {/* 52 Week Range */}
-        <div className={`${cardBgColor} p-5 rounded-lg flex flex-col`}>
-          <h3 className={`text-[13px] font-medium mb-4 ${textColor}`}>52 Week High / 52 Week Low</h3>
+        <div className={`${cardBgColor} p-3 sm:p-4 lg:p-5 rounded-lg flex flex-col min-h-[120px] sm:min-h-[140px] lg:min-h-[160px]`}>
+          <h3 className={`text-xs sm:text-sm lg:text-[13px] font-medium mb-3 sm:mb-4 ${textColor}`}>
+            52 Week High / 52 Week Low
+          </h3>
           <div className="flex-1">
             <PercentageBar 
               segments={[
@@ -42,8 +47,8 @@ const BitcoinAnalytics: React.FC = () => {
           </div>
         </div>
 
-        {/* Market Breadth - Full Width
-        <div className="col-span-1 md:col-span-2">
+        {/* Market Breadth - Full Width on larger screens, single column on mobile
+        <div className="col-span-1 lg:col-span-2">
           <MarketBreadth />
         </div> */}
       </div>
@@ -51,4 +56,4 @@ const BitcoinAnalytics: React.FC = () => {
   );
 };
 
-export default BitcoinAnalytics; 
+export default BitcoinAnalytics;
