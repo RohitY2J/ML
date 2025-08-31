@@ -9,7 +9,7 @@ export default function AccountSettingsPage() {
 
   return (
     <div className={`min-h-screen ${bgColor} flex`}>
-      <main className="flex-1 overflow-hidden">
+      <main className="flex-1">
         <AccountSettings />
       </main>
     </div>
