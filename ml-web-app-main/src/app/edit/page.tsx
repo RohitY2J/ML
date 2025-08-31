@@ -41,7 +41,20 @@ export default function EditPage() {
   const [currentSymbol, setCurrentSymbol] = useState<string>("NEPSE");
   const [isSignalExpanded, setIsSignalExpanded] = useState(false);
   const [isRightSectionCollapsed, setIsRightSectionCollapsed] = useState(true);
+  const [isMobileView, setIsMobileView] = useState(false);
   const { data: combinedSignalsData, isLoading } = useCombinedSignals(currentSymbol);
+
+  // Mobile view detection
+  useEffect(() => {
+    const checkMobileView = () => {
+      setIsMobileView(window.innerWidth < 1024); // lg breakpoint
+    };
+    
+    checkMobileView();
+    window.addEventListener('resize', checkMobileView);
+    
+    return () => window.removeEventListener('resize', checkMobileView);
+  }, []);
 
   console.log(combinedSignalsData);
 
@@ -189,7 +202,7 @@ export default function EditPage() {
   };
 
   return (
-    <div className={`${bgColor} overflow-hidden h-screen`}>
+    <div className={`${bgColor} sm:overflow-auto lg:overflow-hidden max-md:min-h-screen lg:h-screen`}>
       <div className="absolute top-4 right-5 z-10">
         <button
           onClick={() => router.back()}
@@ -211,6 +224,10 @@ export default function EditPage() {
           </svg>
         </button>
       </div>
+
+      {/* Conditional Layout based on isMobileView */}
+      {!isMobileView ? (
+        // Desktop Layout
       <div className="flex h-full">
         <div
           className={`transition-all duration-300 ${
@@ -224,7 +241,7 @@ export default function EditPage() {
           >
             <div className="w-full h-full relative">
               <div ref={container} className="w-full h-full" />
-              <div className="absolute top-0 left-[70%] z-10">
+              <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-10">
                 <ChartControls widget={widget} currentSymbol={currentSymbol} />
               </div>
             </div>
@@ -255,6 +272,42 @@ export default function EditPage() {
           />
         </div>
       </div>
+      ) : (
+        // Mobile Layout
+        <div className="flex flex-col min-h-screen">
+          {/* Chart Section */}
+          <div className="w-full h-[60vh] relative">
+            <div ref={container} className="w-full h-full" />
+            <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-10">
+              <ChartControls widget={widget} currentSymbol={currentSymbol} />
+            </div>
+          </div>
+
+          {/* Market Ticker and Signals */}
+          <div className="px-2 sm:px-4 py-4 flex-1 overflow-auto">
+            <div className="w-full flex flex-col gap-4">
+              <MarketTicker data={marketData} />
+              <div className="mt-4">
+                <SignalTabs
+                  data={combinedSignalsData?.data || []}
+                  isLoading={isLoading}
+                  onExpand={setIsSignalExpanded}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Right Section moved to bottom in mobile */}
+          <div className="w-full">
+            <ChartRightSection
+              onSymbolChange={handleSymbolChange}
+              currentSymbol={currentSymbol}
+              onCollapseChange={handleRightSectionCollapse}
+            />
+          </div>
+        </div>
+      )}
+
       <Disclaimer />
     </div>
   );

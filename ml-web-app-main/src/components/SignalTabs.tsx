@@ -45,7 +45,7 @@ const SignalTabs: React.FC<SignalTabsProps> = ({
   return (
     <div
       className={`rounded-lg ${bgColor} shadow-sm border ${
-        isExpanded ? "h-[95vh]" : "h-[25vh]"
+        isExpanded ? "sm:h-[60vh] lg:h-[95vh]" : "h-[25vh]"
       } ${theme === "dark" ? "border-[#2A2E39]" : "border-gray-200"}`}
     >
       {/* Tabs */}
