@@ -81,20 +81,47 @@ def store_zones(conn, zones, symbol, timeframe_days, zone_type):
     conn.commit()
     cursor.close()
 
-def merge_overlapping_zones(zones):
-    """Merge overlapping zones to ensure no overlap between support and resistance zones"""
+def merge_overlapping_zones(zones, proximity_threshold=0.01):
+    """Merge overlapping zones or zones that are very close to each other"""
     if not zones:
         return zones
     
     # Sort zones by center price
     zones = sorted(zones, key=lambda x: x['center'])
+    
+    # If more than 3 zones, merge closest zones until we have 3 or fewer
+    while len(zones) > 3:
+        # Find the pair of zones with the smallest distance between centers
+        min_distance = float('inf')
+        merge_idx = 0
+        for i in range(len(zones) - 1):
+            distance = abs(zones[i]['center'] - zones[i + 1]['center'])
+            if distance < min_distance:
+                min_distance = distance
+                merge_idx = i
+        
+        # Merge the two closest zones
+        current_zone = zones[merge_idx]
+        next_zone = zones[merge_idx + 1]
+        current_zone['bottom'] = min(current_zone['bottom'], next_zone['bottom'])
+        current_zone['top'] = max(current_zone['top'], next_zone['top'])
+        current_zone['center'] = (current_zone['bottom'] + current_zone['top']) / 2
+        current_zone['points'] = pd.concat([current_zone['points'], next_zone['points']])
+        zones[merge_idx] = current_zone
+        zones.pop(merge_idx + 1)
+    
+    # Merge overlapping or close zones
     merged_zones = []
     current_zone = zones[0]
     
     for next_zone in zones[1:]:
-        # Check if zones overlap
-        if current_zone['top'] >= next_zone['bottom']:
-            # Merge zones by taking the min bottom and max top
+        # Calculate proximity threshold based on the current price
+        price_range = (current_zone['top'] - current_zone['bottom'])
+        effective_threshold = max(proximity_threshold * current_zone['center'], price_range * 0.5)
+        
+        # Check if zones overlap or are closer than the threshold
+        if current_zone['top'] >= next_zone['bottom'] - effective_threshold:
+            # Merge zones
             current_zone['bottom'] = min(current_zone['bottom'], next_zone['bottom'])
             current_zone['top'] = max(current_zone['top'], next_zone['top'])
             current_zone['center'] = (current_zone['bottom'] + current_zone['top']) / 2
@@ -206,9 +233,8 @@ def analyze_zones(df, days, title_suffix, symbol='NEPSE'):
             # Support zone below or at close price
             final_support_zones.append(zone)
     
-    # Merge overlapping zones
-    final_support_zones = merge_overlapping_zones(final_support_zones)
-    final_resistance_zones = merge_overlapping_zones(final_resistance_zones)
+    final_support_zones = merge_overlapping_zones(final_support_zones, proximity_threshold=0.008)
+    final_resistance_zones = merge_overlapping_zones(final_resistance_zones, proximity_threshold=0.008)
     
     # Ensure no overlap between support and resistance zones
     non_overlapping_support_zones = []
@@ -293,7 +319,7 @@ def main():
     symbols = sorted(df['symbol'].unique())
     logger.info(f"Found {len(symbols)} unique symbols to process")
     
-    #symbols = ['NEPSE']
+    #symbols = ['NEPSE','GLICL']
     conn = get_db_connection()
     try:
         cleanup_zones(conn)
