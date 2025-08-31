@@ -227,18 +227,24 @@ const Chart: React.FC = () => {
   };
 
   return (
-    <div className={`px-6 pt-6`}>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className={`text-xl font-semibold ${textColor}`}>{currentSymbol} Chart</h2>
-        <div className="flex items-center gap-4">
-          {/* Symbol Search */}
-          <div className={`relative ${buttonBgColor} rounded-lg`}>
+    <div className="px-3 sm:px-4 md:px-6 pt-4 sm:pt-6">
+      {/* Header - responsive layout */}
+      <div className="flex flex-col gap-3 mb-4 lg:flex-row lg:justify-between lg:items-center">
+        {/* Title */}
+        <h2 className={`text-lg sm:text-xl font-semibold ${textColor} truncate`}>
+          {currentSymbol} Chart
+        </h2>
+        
+        {/* Controls container - responsive flex */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-2 md:gap-4">
+          {/* Symbol Search - responsive width */}
+          <div className={`relative ${buttonBgColor} rounded-lg order-2 sm:order-1`}>
             <input
               type="text"
               placeholder="Search NEPSE symbol..."
               value={searchQuery}
               onChange={handleSearchChange}
-              className={`px-3 py-2 text-xs bg-transparent ${buttonTextColor} placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg w-40`}
+              className={`px-3 py-2 text-xs bg-transparent ${buttonTextColor} placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg w-full sm:w-32 md:w-40`}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   handleSymbolChange(searchQuery);
@@ -260,10 +266,12 @@ const Chart: React.FC = () => {
               </ul>
             )}
           </div>
-          <div className={`relative flex ${buttonBgColor} rounded-lg p-1 px-3 gap-5`}>
+
+          {/* Interval buttons - responsive layout */}
+          <div className={`relative flex ${buttonBgColor} rounded-lg p-1 px-2 sm:px-3 gap-2 sm:gap-3 md:gap-5 order-1 sm:order-2`}>
             <button
               onClick={() => handleIntervalChange("1D")}
-              className={`relative flex-1 py-2 text-xs transition-colors duration-300 rounded-md z-10 ${
+              className={`relative flex-1 py-2 px-2 sm:px-3 text-xs transition-colors duration-300 rounded-md z-10 ${
                 interval === "1D" ? `${textColor}` : `${buttonTextColor} font-medium`
               }`}
             >
@@ -271,7 +279,7 @@ const Chart: React.FC = () => {
             </button>
             <button
               onClick={() => handleIntervalChange("1W")}
-              className={`relative flex-1 py-2 text-xs transition-colors duration-300 rounded-md z-10 ${
+              className={`relative flex-1 py-2 px-2 sm:px-3 text-xs transition-colors duration-300 rounded-md z-10 ${
                 interval === "1W" ? `${textColor}` : `${buttonTextColor} font-medium`
               }`}
             >
@@ -279,7 +287,7 @@ const Chart: React.FC = () => {
             </button>
             <button
               onClick={() => handleIntervalChange("1M")}
-              className={`relative flex-1 py-2 text-xs transition-colors duration-300 rounded-md z-10 ${
+              className={`relative flex-1 py-2 px-2 sm:px-3 text-xs transition-colors duration-300 rounded-md z-10 ${
                 interval === "1M" ? `${textColor}` : `${buttonTextColor} font-medium`
               }`}
             >
@@ -287,30 +295,33 @@ const Chart: React.FC = () => {
             </button>
             <button
               onClick={() => handleIntervalChange("1Y")}
-              className={`relative flex-1 py-2 text-xs transition-colors duration-300 rounded-md z-10 ${
+              className={`relative flex-1 py-2 px-2 sm:px-3 text-xs transition-colors duration-300 rounded-md z-10 ${
                 interval === "1Y" ? `${textColor}` : `${buttonTextColor} font-medium`
               }`}
             >
               1Y
             </button>
             <div
-              className={`absolute h-[calc(100%-8px)] w-[calc(25%-4px)] ${buttonActiveBgColor} rounded-md transition-all duration-300 ease-in-out ${
-                interval === "1D"
-                  ? "left-1"
-                  : interval === "1W"
-                  ? "left-[calc(25%+3px)]"
-                  : interval === "1M"
-                  ? "left-[calc(50%+5px)]"
-                  : "left-[calc(75%)]"
-              }`}
+              className={`absolute h-[calc(100%-8px)] w-[calc(25%-4px)] ${buttonActiveBgColor} rounded-md transition-all duration-300 ease-in-out`}
+              style={{
+                left: interval === "1D" 
+                  ? "4px" 
+                  : interval === "1W" 
+                  ? "calc(25% + 2px)" 
+                  : interval === "1M" 
+                  ? "calc(50%)" 
+                  : "calc(75% - 2px)"
+              }}
             />
           </div>
+
+          {/* Edit button - responsive */}
           <button
             onClick={handleEditClick}
-            className={`relative flex items-center gap-2 ${buttonBgColor} rounded-lg px-3 py-2 text-xs ${buttonTextColor} hover:${buttonHoverTextColor} transition-colors duration-300`}
+            className={`relative flex items-center justify-center gap-2 ${buttonBgColor} rounded-lg px-3 py-2 text-xs ${buttonTextColor} hover:${buttonHoverTextColor} transition-colors duration-300 order-3 sm:order-3`}
           >
             <svg
-              className="w-4 h-4"
+              className="w-4 h-4 flex-shrink-0"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -323,13 +334,14 @@ const Chart: React.FC = () => {
                 d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
               />
             </svg>
-            MeroLagani Ai
+            <span className="sm:inline">MeroLagani Ai</span>
           </button>
         </div>
       </div>
 
+      {/* Chart container - responsive height */}
       <div
-        className={`h-[500px] rounded-lg overflow-hidden ${
+        className={`h-[400px] sm:h-[450px] md:h-[500px] lg:h-[550px] xl:h-[600px] rounded-lg overflow-hidden ${
           theme === "dark" ? "bg-[#cdcdcd]" : "bg-white"
         }`}
       >

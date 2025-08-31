@@ -85,58 +85,79 @@ const MarketTicker: React.FC<MarketTickerProps> = ({ data }) => {
         {sortedData.map((item) => (
           <div
             key={item.key}
-            className={`flex items-center gap-2 sm:gap-4 px-2 sm:px-4 border-r border-gray-200 last:border-r-0 ${
-              isMobile ? 'min-w-[180px]' : 'min-w-[250px]'
+            className={`flex items-center justify-between px-2 sm:px-3 md:px-4 border-r border-gray-200 last:border-r-0 ${
+              isMobile ? 'min-w-[140px] gap-1' : 'min-w-[200px] sm:min-w-[250px] gap-2 sm:gap-4'
             }`}
           >
+            {/* Left side - Symbol and Value */}
             <div className="flex flex-col min-w-0 flex-1">
-              <span className={`text-10 sm:text-11 font-semibold ${textColor} truncate`}>{item.n}</span>
-              <span className={`text-10 sm:text-11 ${secondaryTextColor}`}>
+              <span className={`text-[9px] xs:text-[10px] sm:text-[11px] font-semibold ${textColor} truncate leading-tight`}>
+                {isMobile ? item.n.substring(0, 6) + (item.n.length > 6 ? '...' : '') : item.n}
+              </span>
+              <span className={`text-[8px] xs:text-[9px] sm:text-[10px] md:text-[11px] ${secondaryTextColor} leading-tight`}>
                 {item.v.toLocaleString('en-US', { 
-                  minimumFractionDigits: isMobile ? 1 : 2, 
-                  maximumFractionDigits: 2 
+                  minimumFractionDigits: isMobile ? 0 : 1, 
+                  maximumFractionDigits: isMobile ? 1 : 2 
                 })}
               </span>
             </div>
-            <div className="flex flex-col items-end flex-shrink-0">
-              <span className={`text-10 sm:text-11 font-semibold ${item.pc >= 0 ? positiveColor : negativeColor}`}>
+            
+            {/* Right side - Percentage and Total */}
+            <div className="flex flex-col items-end flex-shrink-0 min-w-0">
+              <span className={`text-[9px] xs:text-[10px] sm:text-[11px] font-semibold ${item.pc >= 0 ? positiveColor : negativeColor} leading-tight`}>
                 {item.pc >= 0 ? '+' : ''}{item.pc.toFixed(isMobile ? 1 : 2)}%
               </span>
-              <span className={`text-10 sm:text-11 ${secondaryTextColor}`}>
-                {item.t.toLocaleString('en-US', { 
-                  minimumFractionDigits: isMobile ? 1 : 2, 
-                  maximumFractionDigits: 2 
-                })}
+              <span className={`text-[8px] xs:text-[9px] sm:text-[10px] md:text-[11px] ${secondaryTextColor} leading-tight truncate max-w-[60px] sm:max-w-none`}>
+                {isMobile 
+                  ? item.t > 1000 
+                    ? `${(item.t / 1000).toFixed(0)}K`
+                    : item.t.toFixed(0)
+                  : item.t.toLocaleString('en-US', { 
+                      minimumFractionDigits: 1, 
+                      maximumFractionDigits: 2 
+                    })
+                }
               </span>
             </div>
           </div>
         ))}
+        
         {/* Duplicate items for seamless scrolling */}
         {sortedData.map((item) => (
           <div
             key={`${item.key}-duplicate`}
-            className={`flex items-center gap-2 sm:gap-4 px-2 sm:px-4 border-r border-gray-200 last:border-r-0 ${
-              isMobile ? 'min-w-[180px]' : 'min-w-[250px]'
+            className={`flex items-center justify-between px-2 sm:px-3 md:px-4 border-r border-gray-200 last:border-r-0 ${
+              isMobile ? 'min-w-[140px] gap-1' : 'min-w-[200px] sm:min-w-[250px] gap-2 sm:gap-4'
             }`}
           >
+            {/* Left side - Symbol and Value */}
             <div className="flex flex-col min-w-0 flex-1">
-              <span className={`text-10 sm:text-11 font-semibold ${textColor} truncate`}>{item.n}</span>
-              <span className={`text-10 sm:text-11 ${secondaryTextColor}`}>
+              <span className={`text-[9px] xs:text-[10px] sm:text-[11px] font-semibold ${textColor} truncate leading-tight`}>
+                {isMobile ? item.n.substring(0, 6) + (item.n.length > 6 ? '...' : '') : item.n}
+              </span>
+              <span className={`text-[8px] xs:text-[9px] sm:text-[10px] md:text-[11px] ${secondaryTextColor} leading-tight`}>
                 {item.v.toLocaleString('en-US', { 
-                  minimumFractionDigits: isMobile ? 1 : 2, 
-                  maximumFractionDigits: 2 
+                  minimumFractionDigits: isMobile ? 0 : 1, 
+                  maximumFractionDigits: isMobile ? 1 : 2 
                 })}
               </span>
             </div>
-            <div className="flex flex-col items-end flex-shrink-0">
-              <span className={`text-10 sm:text-11 font-semibold ${item.pc >= 0 ? positiveColor : negativeColor}`}>
+            
+            {/* Right side - Percentage and Total */}
+            <div className="flex flex-col items-end flex-shrink-0 min-w-0">
+              <span className={`text-[9px] xs:text-[10px] sm:text-[11px] font-semibold ${item.pc >= 0 ? positiveColor : negativeColor} leading-tight`}>
                 {item.pc >= 0 ? '+' : ''}{item.pc.toFixed(isMobile ? 1 : 2)}%
               </span>
-              <span className={`text-10 sm:text-11 ${secondaryTextColor}`}>
-                {item.t.toLocaleString('en-US', { 
-                  minimumFractionDigits: isMobile ? 1 : 2, 
-                  maximumFractionDigits: 2 
-                })}
+              <span className={`text-[8px] xs:text-[9px] sm:text-[10px] md:text-[11px] ${secondaryTextColor} leading-tight truncate max-w-[60px] sm:max-w-none`}>
+                {isMobile 
+                  ? item.t > 1000 
+                    ? `${(item.t / 1000).toFixed(0)}K`
+                    : item.t.toFixed(0)
+                  : item.t.toLocaleString('en-US', { 
+                      minimumFractionDigits: 1, 
+                      maximumFractionDigits: 2 
+                    })
+                }
               </span>
             </div>
           </div>
