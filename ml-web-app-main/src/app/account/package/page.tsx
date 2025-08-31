@@ -9,7 +9,7 @@ export default function PackageDetailsPage() {
 
   return (
     <div className={`min-h-screen ${bgColor} flex`}>
-      <main className="flex-1 overflow-hidden">
+      <main className="flex-1">
         <PackageDetails />
       </main>
     </div>

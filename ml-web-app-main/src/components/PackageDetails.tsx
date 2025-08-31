@@ -77,80 +77,108 @@ export default function PackageDetails() {
   ];
 
   return (
-    <div className={`h-[calc(100vh)] ${bgColor}`}>
-      <div className="flex h-[calc(100vh)]">
-        <div
-          className={`shrink-0 w-[390px] min-w-[329px] overflow-y-auto border-r ${borderColor} p-6`}
-        >
-          <div className="space-y-6">
-            <div className={`${cardBgColor} rounded-lg p-6 shadow-sm`}>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className={`text-xl font-medium ${textColor}`}>Current Package</h2>
-                <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-                  Active
-                </span>
+    <div className={`min-h-screen ${bgColor}`}>
+      <div className="max-sm:p-4">
+        <h1 className={`text-xl font-medium mb-4 ${textColor} lg:hidden`}>Package Details</h1>
+        <div className="flex flex-col lg:flex-row min-h-[calc(100vh-2rem)]">
+          {/* Left Sidebar - Current Package */}
+          <div
+            className={`w-full lg:w-[390px] lg:min-w-[329px] lg:shrink-0 overflow-y-auto border-b lg:border-b-0 lg:border-r ${borderColor} p-4 lg:p-6 mb-4 lg:mb-0`}
+          >
+            <div className="space-y-4 lg:space-y-6">
+              <div className={`${cardBgColor} rounded-lg p-4 lg:p-6 shadow-sm`}>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
+                  <h2 className={`text-lg lg:text-xl font-medium ${textColor}`}>Current Package</h2>
+                  <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm w-fit">
+                    Active
+                  </span>
+                </div>
+                <div className="space-y-3 lg:space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className={`text-sm ${textColor} opacity-70`}>Package Type</span>
+                    <span className={`text-sm ${textColor} font-medium`}>{currentPackage.name}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className={`text-sm ${textColor} opacity-70`}>Valid Until</span>
+                    <span className={`text-sm ${textColor} font-medium`}>
+                      {currentPackage.expiryDate}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className={`text-sm ${textColor} opacity-70`}>Price</span>
+                    <span className={`text-sm ${textColor} font-medium`}>
+                      {currentPackage.price}/{currentPackage.period}
+                    </span>
+                  </div>
+                </div>
               </div>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className={`text-sm ${textColor} opacity-70`}>Package Type</span>
-                  <span className={`text-sm ${textColor} font-medium`}>{currentPackage.name}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className={`text-sm ${textColor} opacity-70`}>Valid Until</span>
-                  <span className={`text-sm ${textColor} font-medium`}>
-                    {currentPackage.expiryDate}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className={`text-sm ${textColor} opacity-70`}>Price</span>
-                  <span className={`text-sm ${textColor} font-medium`}>
-                    {currentPackage.price}/{currentPackage.period}
-                  </span>
+
+              {/* Current Package Features - Hidden on larger screens, shown on mobile */}
+              <div className={`${cardBgColor} rounded-lg p-4 lg:hidden`}>
+                <h3 className={`text-base font-medium mb-4 ${textColor}`}>Current Features</h3>
+                <div className="space-y-3">
+                  {currentPackage.features.map((feature) => (
+                    <div key={feature.name} className="flex items-center gap-2">
+                      {feature.included ? (
+                        <RiCheckLine className={`w-4 h-4 text-green-500 shrink-0`} />
+                      ) : (
+                        <RiCloseLine className={`w-4 h-4 text-red-500 shrink-0`} />
+                      )}
+                      <span className={`text-sm ${textColor}`}>{feature.name}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div className="flex-1 overflow-y-auto p-6">
-          <div className="max-w-4xl mx-auto">
-            <h1 className={`text-xl font-medium mb-8 ${textColor}`}>Available Packages</h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {availablePackages.map((pkg) => (
-                <div
-                  key={pkg.name}
-                  className={`${cardBgColor} rounded-lg p-6 ${
-                    pkg.name === currentPackage.name ? "ring-2 ring-blue-500" : ""
-                  }`}
-                >
-                  <h2 className={`text-base font-medium mb-2 ${textColor}`}>{pkg.name}</h2>
-                  <div className="mb-6">
-                    <span className={`text-2xl font-medium ${textColor}`}>{pkg.price}</span>
-                    <span className={`text-sm ${textColor} opacity-70`}>/{pkg.period}</span>
-                  </div>
-                  <div className="space-y-3 mb-6">
-                    {pkg.features.map((feature) => (
-                      <div key={feature.name} className="flex items-center gap-2">
-                        {feature.included ? (
-                          <RiCheckLine className={`w-4 h-4 text-green-500`} />
-                        ) : (
-                          <RiCloseLine className={`w-4 h-4 text-red-500`} />
-                        )}
-                        <span className={`text-sm ${textColor}`}>{feature.name}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <button
-                    className={`w-full py-2 rounded-lg text-sm font-medium ${
-                      pkg.name === currentPackage.name
-                        ? "bg-gray-500 text-white cursor-not-allowed"
-                        : "bg-blue-600 text-white hover:bg-blue-700"
-                    } transition-colors`}
-                    disabled={pkg.name === currentPackage.name}
+
+          {/* Main Content - Available Packages */}
+          <div className="flex-1 p-4 lg:p-6">
+            <div className="max-w-6xl mx-auto">
+              <h1 className={`text-xl font-medium mb-6 lg:mb-8 ${textColor} hidden lg:block`}>Available Packages</h1>
+              <h2 className={`text-lg font-medium mb-4 ${textColor} lg:hidden`}>Choose a Package</h2>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
+                {availablePackages.map((pkg) => (
+                  <div
+                    key={pkg.name}
+                    className={`${cardBgColor} rounded-lg p-4 lg:p-6 ${
+                      pkg.name === currentPackage.name ? "ring-2 ring-blue-500" : ""
+                    } shadow-sm`}
                   >
-                    {pkg.name === currentPackage.name ? "Current Package" : "Upgrade"}
-                  </button>
-                </div>
-              ))}
+                      <h2 className={`text-base font-medium ${textColor}`}>{pkg.name}</h2>
+                      
+                    <div className="mb-4 lg:mb-6">
+                      <span className={`text-xl lg:text-2xl font-medium ${textColor}`}>{pkg.price}</span>
+                      <span className={`text-sm ${textColor} opacity-70`}>/{pkg.period}</span>
+                    </div>
+                    
+                    <div className="space-y-2 lg:space-y-3 mb-4 lg:mb-6">
+                      {pkg.features.map((feature) => (
+                        <div key={feature.name} className="flex items-start gap-2">
+                          {feature.included ? (
+                            <RiCheckLine className={`w-4 h-4 text-green-500 shrink-0 mt-0.5`} />
+                          ) : (
+                            <RiCloseLine className={`w-4 h-4 text-red-500 shrink-0 mt-0.5`} />
+                          )}
+                          <span className={`text-sm ${textColor} leading-relaxed`}>{feature.name}</span>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    <button
+                      className={`w-full py-2 lg:py-2.5 rounded-lg text-sm font-medium ${
+                        pkg.name === currentPackage.name
+                          ? "bg-gray-500 text-white cursor-not-allowed"
+                          : "bg-blue-600 text-white hover:bg-blue-700"
+                      } transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
+                      disabled={pkg.name === currentPackage.name}
+                    >
+                      {pkg.name === currentPackage.name ? "Current Package" : "Upgrade"}
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
